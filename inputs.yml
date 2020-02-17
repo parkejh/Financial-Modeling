@@ -1,0 +1,165 @@
+cost_inputs:
+   generation:
+      nuclear:
+         capital:   # $/kWe
+            best: 4000
+            median: 15000
+            worst: 20000
+         capacity_factor:
+            best: 0.98
+            median: 0.95
+            worst: 0.95
+         plant_life: # years
+            best: 60
+            median: 40
+            worst: 20
+         fixed_om: # $/kWe
+            best: 100
+            median: 250
+            worst: 450
+         heat_rate: # mmBTU/kWh
+            best: 0
+            median: 0
+            worst: 0
+         fuel_cost_BTU: # $/mmBTU
+            best: 0
+            median: 0
+            worst: 0
+         fuel_cost_kWh: # $/kWh
+            best: 0.006
+            median: 0.010
+            worst: 0.014
+         core_life: # years
+            best: 20
+            median: 10
+            worst: 5
+         refurb_cost: # $
+            best: 13000000
+            median: 20000000
+            worst: 27000000
+         variable_om: # $/kWh
+            best: 0
+            median: 0
+            worst: 0
+         one_time_cost # $
+            best: 0
+            median: 0
+            worst: 0
+      diesel:
+         capital:   # $/kWe
+            best: 500
+            median: 800
+            worst: 1100
+         capacity_factor:
+            best: 0.98
+            median: 0.95
+            worst: 0.85
+         plant_life: # years
+            best: 10
+            median: 8
+            worst: 5
+         fixed_om: # $/kWe
+            best: 20
+            median: 30
+            worst: 35
+         heat_rate: # mmBTU/kWh
+            best: 0.007855
+            median: 0.00849189
+            worst: 0.009818750
+         fuel_cost_BTU: # $/mmBTU
+            best: 20
+            median: 25
+            worst: 30
+         fuel_cost_kWh: # $/kWh
+            best: 0.17
+            median: 0.23
+            worst: 0.32
+         core_life: # years
+            best: 0
+            median: 0
+            worst: 0
+         refurb_cost: # $
+            best: 0
+            median: 0
+            worst: 0
+         variable_om: # $/kWh
+            best: 0
+            median: 0
+            worst: 0
+         one_time_cost # $
+            best: 0
+            median: 0
+            worst: 0
+      natural_gas:
+         capital:   # $/kWe
+            best: 800
+            median: 1100
+            worst: 2000
+         capacity_factor:
+            best: 0.98
+            median: 0.95
+            worst: 0.85
+         plant_life: # years
+            best: 10
+            median: 8
+            worst: 5
+         fixed_om: # $/kWe
+            best: 10
+            median: 20
+            worst: 30
+         heat_rate: # mmBTU/kWh
+            best: 0.008123810
+            median: 0.008748718
+            worst: 0.009748571
+         fuel_cost_BTU: # $/mmBTU
+            best: 2.9
+            median: 3.6
+            worst: 4.3
+         fuel_cost_kWh: # $/kWh
+            best: 0.028
+            median: 0.314
+            worst: 0.035
+         core_life: # years
+            best: 0
+            median: 0
+            worst: 0
+         refurb_cost: # $
+            best: 0
+            median: 0
+            worst: 0
+         variable_om: # $/kWh
+            best: 0
+            median: 0
+            worst: 0
+         one_time_cost # $
+            best: 0
+            median: 0
+            worst: 0
+   lng_cost:  # $/kWh
+      best: 0.049
+      median: 0.0654
+      worst: 0.081
+scenarios:
+   scenario_1:
+      utility_power_gen: 52 # MW
+      primary_power_gen:  0 # MW
+      backup_power_gen: 23 # MW
+   scenario_2:
+      utility_power_gen: 26 # MW
+      primary_power_gen: 26 # MW
+      backup_power_gen:  0 # MW
+   scenario_1:
+      utility_power_gen: 29 # MW
+      primary_power_gen: 23 # MW
+      backup_power_gen: 23 # MW
+   scenario_1:
+      utility_power_gen: 0 # MW
+      primary_power_gen: 82 # MW
+      backup_power_gen: 26 # MW
+assumptions:
+   days_of_resilience: 56 # days
+   cost_of_capital:   0.1
+   utility_rate: 0.06 # #/kWh
+   days_backup_per_year: 7 # days
+   
+
