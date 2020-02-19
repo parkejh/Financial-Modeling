@@ -1,5 +1,26 @@
 # -*- coding: utf-8 -*-
 """
+Spyder Editor
+
+This is a temporary script file.
+"""
+
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
+
+This is a temporary script file.
+"""
+
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
+
+This is a temporary script file.
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Thu Nov 21 13:33:50 2019
 
 @author: jjjlp
@@ -112,7 +133,7 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario2']:
        
        
         if GenerationInputBackup =='NaturalGas':
-            CapacityFactorBackup =dfInputs['Capacity Factor (Decimal)'][2] #
+            CapacityFactorBackup =1 #
             FuelCostBackup = dfInputs['Fuel Cost ($/mmBTU)'][2]     #  $/mmBTU
             HeatRateBackup = dfInputs['Heat Rate (mmBTU/kWh)'][2]  #  mmBTU/kWh
             AltFuelCostBackup =  dfInputs['Fuel Cost ($/KWh)'][2] #  $/kWh
@@ -137,7 +158,7 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario2']:
             
         elif GenerationInputBackup == 'Diesel':
             #Diesel
-            CapacityFactorBackup = dfInputs['Capacity Factor (Decimal)'][1] #
+            CapacityFactorBackup = 1 #
             FuelCostBackup = dfInputs['Fuel Cost ($/mmBTU)'][1]   #  $/mmBTU
             HeatRateBackup = dfInputs['Heat Rate (mmBTU/kWh)'][1]#  mmBTU/kWh
             AltFuelCostBackup = dfInputs['Fuel Cost ($/KWh)'][1]  #  $/kWh
@@ -149,7 +170,7 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario2']:
             NumberOfYearsBackup = dfInputs['Plant Life (Years)'][1]
             
         elif GenerationInputBackup == 'Nuclear':
-            CapacityFactorBackup = dfInputs['Capacity Factor (Decimal)'][0] #
+            CapacityFactorBackup = 1 #
             FuelCostBackup = dfInputs['Fuel Cost ($/mmBTU)'][0]     #  $/mmBTU
             HeatRateBackup = dfInputs['Heat Rate (mmBTU/kWh)'][0]  #  mmBTU/kWh
             AltFuelCostBackup = dfInputs['Fuel Cost ($/KWh)'][0]  #  $/kWh
@@ -191,13 +212,13 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario2']:
         TotalAnnualGeneration = DaysOfPowerPerYear*24*1000*CapacityNeeded      #kWh
         if AltFuelCost == 0:
             AnnualFuelCost=FuelCost*HeatRate*TotalAnnualGeneration*CapacityFactor  #  $
-            AnnualFixedOMCost = FixedOMCost*CapacityNeeded*1000     #  $
-            AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration# $
+            AnnualFixedOMCost = FixedOMCost*CapacityNeeded*1000*CapacityFactor     #  $
+            AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration*CapacityFactor# $
    
         else:
             AnnualFuelCost = AltFuelCost*TotalAnnualGeneration*CapacityFactor    #   $
-            AnnualFixedOMCost =FixedOMCost*CapacityNeeded*1000    #   $
-            AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration  #  $
+            AnnualFixedOMCost =FixedOMCost*CapacityNeeded*1000*CapacityFactor    #   $
+            AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration*CapacityFactor  #  $
 
 
         TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
@@ -212,7 +233,7 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario2']:
    # print("IntermittentCosts", IntermittentCosts)
    
      
-        CapacityNeededBackup = PowerGenerationBackup / CapacityFactorBackup
+        CapacityNeededBackup = PowerGenerationBackup
        
         TotalCapitalCostBackup = 1000*CapacityNeededBackup*CapitalCostBackup
         TotalAnnualGenerationBackup = DaysOfPowerPerYearBackup*24*1000*CapacityNeededBackup
@@ -220,12 +241,12 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario2']:
 
            
    
-            AnnualFuelCostBackup=FuelCostBackup*HeatRateBackup*TotalAnnualGenerationBackup*CapacityFactorBackup  #  $
+            AnnualFuelCostBackup=FuelCostBackup*HeatRateBackup*TotalAnnualGenerationBackup  #  $
             AnnualFixedOMCostBackup = FixedOMCostBackup*CapacityNeededBackup*1000     #  $
             AnnualVariableOMCostBackup = VariableOMCostBackup*TotalAnnualGenerationBackup# $
         else:
 
-            AnnualFuelCostBackup = AltFuelCostBackup*TotalAnnualGenerationBackup*CapacityFactorBackup   #   $
+            AnnualFuelCostBackup = AltFuelCostBackup*TotalAnnualGenerationBackup   #   $
             AnnualFixedOMCostBackup =FixedOMCostBackup*CapacityNeededBackup*1000    #   $
             AnnualVariableOMCostBackup = VariableOMCostBackup*TotalAnnualGenerationBackup  #  $
 
