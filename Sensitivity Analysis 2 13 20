@@ -18,7 +18,7 @@ dfInputs = dfInputs.fillna(0)
 dfInputs['Plant Life (Years)'] = dfInputs['Plant Life (Years)'].astype(int)
 
 
-
+years=["year2019: ", "year2020: ","year2021: ","year2022: ","year2023: ","year2024: ","year2025: ","year2026: ","year2027: ","year2028: ","year2029: ","year2030: ","year2031: ","year2032: ","year2033: ","year2034: ","year2035: ","year2036: ","year2037: ","year2038: ","year2039: ","year2040: ","year2041: ","year2042: ","year2043: ","year2044: ","year2045: ","year2046: ","year2047: ","year2048: ","year2049: ","year2050: ","year2051: ","year2052: ","year2053: ","year2054: ","year2055: ","year2056: ","year2057: ","year2058: ","year2059: ","year2060: ","year2061: ","year2062: ","year2063: ","year2064: ","year2065: ","year2066: ","year2067: ","year2068: ","year2069: ","year2070: ","year2071: ","year2072: ","year2073: ","year2074: ","year2075: ","year2076: ","year2077: ","year2078: ","year2079: ","year2080: "]
 print(dfInputs)
 print(dfAssumptions)
 CostOfCapitalList = list(dfAssumptions['Costs of Capital:'])
@@ -26,7 +26,7 @@ CostOfCapitalList = [x for x in CostOfCapitalList if str(x) != 'nan']
 print(CostOfCapitalList)
 for interest in CostOfCapitalList:
 
-#interest = dfAssumptions['Input'][1]
+
  UtilityRate = dfAssumptions['Input'][2]   # $/Kwh
 #####################################################################################################################
  DaysOfPowerPerYear = 365   ### Enter days needed to run per year; out of 365.
@@ -103,6 +103,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][1]
             NumberOfYears= dfInputs['Plant Life (Years)'][1]
             CoreLife = dfInputs['Core Life (Years)'][1]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][1]
             
             
             
@@ -142,6 +143,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian =0
             NumberOfYears=0
             CoreLife = 0
+            DecommissionCost=0
            
             
             FixedOMCostBest  = 0
@@ -181,6 +183,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][7]
             NumberOfYears =dfInputs['Plant Life (Years)'][7]
             CoreLife = 0
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][7]
             
             
             FixedOMCostBest  = dfInputs['Fixed O&M Cost ($/kWe)'][6]
@@ -219,6 +222,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][4]
             NumberOfYears = dfInputs['Plant Life (Years)'][4]
             CoreLife = 0
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][4]
            
             
             FixedOMCostBest  = dfInputs['Fixed O&M Cost ($/kWe)'][3]
@@ -404,6 +408,11 @@ for interest in CostOfCapitalList:
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
         else:
             AltFuelCostBackup = AltFuelCostBackup
+            
+        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
            
         
 ##################################################################################################
@@ -426,6 +435,7 @@ for interest in CostOfCapitalList:
 
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
+            AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
 
 
    # print("CapacityNeeded:" , CapacityNeeded)
@@ -484,9 +494,6 @@ for interest in CostOfCapitalList:
                 FuelEscalationBackup = FuelIndexDummy
             else:
                 FuelEscalationBackup = FuelIndexDummy
-       
-       
-            years=["year2019: ", "year2020: ","year2021: ","year2022: ","year2023: ","year2024: ","year2025: ","year2026: ","year2027: ","year2028: ","year2029: ","year2030: ","year2031: ","year2032: ","year2033: ","year2034: ","year2035: ","year2036: ","year2037: ","year2038: ","year2039: ","year2040: ","year2041: ","year2042: ","year2043: ","year2044: ","year2045: ","year2046: ","year2047: ","year2048: ","year2049: ","year2050: ","year2051: ","year2052: ","year2053: ","year2054: ","year2055: ","year2056: ","year2057: ","year2058: ","year2059: ","year2060: "]
 
 
             pd.set_option('display.max_columns', None)
@@ -498,20 +505,29 @@ for interest in CostOfCapitalList:
             CapitalCosts = [TotalCapitalCost+OneTimeCosts]
             OMtList = [0]
             FuelList = [0]
+            RefurbishmentList = [0]
+            DecommissionList = [0]
             for t in range(1,NumberOfYears+1):
                 Ft = (AnnualFuelCost*FuelEscalation[t])
                 OMt = (TotalOMCost)
                 FuelList.append(Ft)
                 OMtList.append(OMt)
-                if GenerationInput == 'Nuclear' and t % CoreLife == 0:
-                    CapitalCosts.append(float(IntermittentCosts))
-                else:
-                    CapitalCosts.append(0)
-            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, OMtList, FuelList)), columns = ['Year', 'CapInv.', 'O&M', 'FuelCost'])
-            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']
+                CapitalCosts.append(0)
+            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                RefurbishmentList.append(float(IntermittentCosts))
+            else:
+                RefurbishmentList.append(0)
+            if t == NumberOfYears:
+                DecommissionList.append(AnnualDecommissionCost)
+            else:
+                DecommissionList.append(0)
+            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
+            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
             dfPrimary['CapInv.'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['CapInv.']), axis=1)
             dfPrimary['FuelCost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['FuelCost']), axis=1)
+            dfPrimary['Refurbishment Cost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Refurbishment Cost']), axis=1)
+            dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
 
             
             PrimaryNPV= np.npv(interest, dfPrimary['Total'])
@@ -800,6 +816,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][1]
             NumberOfYears= dfInputs['Plant Life (Years)'][1]
             CoreLife = dfInputs['Core Life (Years)'][1]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][1]
             
             
             
@@ -839,6 +856,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian =0
             NumberOfYears=0
             CoreLife = 0
+            DecommissionCost= 0
            
             
             FixedOMCostBest  = 0
@@ -878,6 +896,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][7]
             NumberOfYears =dfInputs['Plant Life (Years)'][7]
             CoreLife = 0
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][7]
             
             
             FixedOMCostBest  = dfInputs['Fixed O&M Cost ($/kWe)'][6]
@@ -916,6 +935,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][4]
             NumberOfYears = dfInputs['Plant Life (Years)'][4]
             CoreLife = 0
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][4]
            
             
             FixedOMCostBest  = dfInputs['Fixed O&M Cost ($/kWe)'][3]
@@ -1089,7 +1109,11 @@ for interest in CostOfCapitalList:
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
         else:
             AltFuelCostBackup = AltFuelCostBackup
-           
+            
+        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup          
         
 ##################################################################################################
         for CapitalCost in [CapitalCostBest, CapitalCostMedian, CapitalCostWorst ]:
@@ -1111,6 +1135,7 @@ for interest in CostOfCapitalList:
 
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
+            AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
 
 
    # print("CapacityNeeded:" , CapacityNeeded)
@@ -1171,8 +1196,6 @@ for interest in CostOfCapitalList:
                 FuelEscalationBackup = FuelIndexDummy
        
        
-            years=["year2019: ", "year2020: ","year2021: ","year2022: ","year2023: ","year2024: ","year2025: ","year2026: ","year2027: ","year2028: ","year2029: ","year2030: ","year2031: ","year2032: ","year2033: ","year2034: ","year2035: ","year2036: ","year2037: ","year2038: ","year2039: ","year2040: ","year2041: ","year2042: ","year2043: ","year2044: ","year2045: ","year2046: ","year2047: ","year2048: ","year2049: ","year2050: ","year2051: ","year2052: ","year2053: ","year2054: ","year2055: ","year2056: ","year2057: ","year2058: ","year2059: ","year2060: "]
-
 
             pd.set_option('display.max_columns', None)
             pd.set_option('display.max_rows', None)
@@ -1183,20 +1206,29 @@ for interest in CostOfCapitalList:
             CapitalCosts = [TotalCapitalCost+OneTimeCosts]
             OMtList = [0]
             FuelList = [0]
+            RefurbishmentList = [0]
+            DecommissionList = [0]
             for t in range(1,NumberOfYears+1):
                 Ft = (AnnualFuelCost*FuelEscalation[t])
                 OMt = (TotalOMCost)
                 FuelList.append(Ft)
                 OMtList.append(OMt)
-                if GenerationInput == 'Nuclear' and t % CoreLife == 0:
-                    CapitalCosts.append(float(IntermittentCosts))
-                else:
-                    CapitalCosts.append(0)
-            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, OMtList, FuelList)), columns = ['Year', 'CapInv.', 'O&M', 'FuelCost'])
-            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']
+                CapitalCosts.append(0)
+            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                RefurbishmentList.append(float(IntermittentCosts))
+            else:
+                RefurbishmentList.append(0)
+            if t == NumberOfYears:
+                DecommissionList.append(AnnualDecommissionCost)
+            else:
+                DecommissionList.append(0)
+            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
+            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
             dfPrimary['CapInv.'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['CapInv.']), axis=1)
             dfPrimary['FuelCost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['FuelCost']), axis=1)
+            dfPrimary['Refurbishment Cost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Refurbishment Cost']), axis=1)
+            dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
 
             
             PrimaryNPV= np.npv(interest, dfPrimary['Total'])
@@ -1493,6 +1525,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][1]
             NumberOfYears= dfInputs['Plant Life (Years)'][1]
             CoreLife = dfInputs['Core Life (Years)'][1]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][1]
             
             
             
@@ -1533,6 +1566,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian =0
             NumberOfYears=0
             CoreLife = 0
+            DecommissionCost= 0
            
             
             FixedOMCostBest  = 0
@@ -1573,6 +1607,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][7]
             NumberOfYears =dfInputs['Plant Life (Years)'][7]
             CoreLife = 0
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][7]
             
             
             FixedOMCostBest  = dfInputs['Fixed O&M Cost ($/kWe)'][6]
@@ -1612,6 +1647,7 @@ for interest in CostOfCapitalList:
             CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][4]
             NumberOfYears = dfInputs['Plant Life (Years)'][4]
             CoreLife = 0
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][4]
            
             
             FixedOMCostBest  = dfInputs['Fixed O&M Cost ($/kWe)'][3]
@@ -1785,6 +1821,11 @@ for interest in CostOfCapitalList:
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
         else:
             AltFuelCostBackup = AltFuelCostBackup
+            
+        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
            
         CapacityFactorBackupMedian =1
         CapacityFactorBackupBest = 1
@@ -1809,6 +1850,7 @@ for interest in CostOfCapitalList:
 
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
+            AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
 
 
    # print("CapacityNeeded:" , CapacityNeeded)
@@ -1869,7 +1911,6 @@ for interest in CostOfCapitalList:
                 FuelEscalationBackup = FuelIndexDummy
        
        
-            years=["year2019: ", "year2020: ","year2021: ","year2022: ","year2023: ","year2024: ","year2025: ","year2026: ","year2027: ","year2028: ","year2029: ","year2030: ","year2031: ","year2032: ","year2033: ","year2034: ","year2035: ","year2036: ","year2037: ","year2038: ","year2039: ","year2040: ","year2041: ","year2042: ","year2043: ","year2044: ","year2045: ","year2046: ","year2047: ","year2048: ","year2049: ","year2050: ","year2051: ","year2052: ","year2053: ","year2054: ","year2055: ","year2056: ","year2057: ","year2058: ","year2059: ","year2060: "]
 
 
             pd.set_option('display.max_columns', None)
@@ -1881,20 +1922,30 @@ for interest in CostOfCapitalList:
             CapitalCosts = [TotalCapitalCost+OneTimeCosts]
             OMtList = [0]
             FuelList = [0]
+            RefurbishmentList = [0]
+            DecommissionList = [0]
             for t in range(1,NumberOfYears+1):
                 Ft = (AnnualFuelCost*FuelEscalation[t])
                 OMt = (TotalOMCost)
                 FuelList.append(Ft)
                 OMtList.append(OMt)
-                if GenerationInput == 'Nuclear' and t % CoreLife == 0:
-                    CapitalCosts.append(float(IntermittentCosts))
-                else:
-                    CapitalCosts.append(0)
-            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, OMtList, FuelList)), columns = ['Year', 'CapInv.', 'O&M', 'FuelCost'])
-            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']
+                CapitalCosts.append(0)
+            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                RefurbishmentList.append(float(IntermittentCosts))
+            else:
+                RefurbishmentList.append(0)
+            if t == NumberOfYears:
+                DecommissionList.append(AnnualDecommissionCost)
+            else:
+                DecommissionList.append(0)
+            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
+            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
             dfPrimary['CapInv.'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['CapInv.']), axis=1)
             dfPrimary['FuelCost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['FuelCost']), axis=1)
+            dfPrimary['Refurbishment Cost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Refurbishment Cost']), axis=1)
+            dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
+            
 
             
             PrimaryNPV= np.npv(interest, dfPrimary['Total'])
@@ -2209,6 +2260,7 @@ for interest in CostOfCapitalList:
             NumberOfYears= dfInputs['Plant Life (Years)'][1]
             CoreLife = dfInputs['Core Life (Years)'][1]
             NumberOfYearsMedian= dfInputs['Plant Life (Years)'][1]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][1]
 
             
             
@@ -2251,6 +2303,7 @@ for interest in CostOfCapitalList:
             NumberOfYears=0
             NumberOfYearsMedian = 0
             CoreLife = 0
+            DecommissionCost= 0
            
             
             FixedOMCostBest  = 0
@@ -2292,6 +2345,7 @@ for interest in CostOfCapitalList:
             NumberOfYears =dfInputs['Plant Life (Years)'][7]
             CoreLife = 0
             NumberOfYearsMedian =dfInputs['Plant Life (Years)'][7]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][7]
 
             
             
@@ -2333,6 +2387,7 @@ for interest in CostOfCapitalList:
             NumberOfYears = dfInputs['Plant Life (Years)'][4]
             CoreLife = 0
             NumberOfYearsMedian = dfInputs['Plant Life (Years)'][4]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][4]
 
            
             
@@ -2511,6 +2566,11 @@ for interest in CostOfCapitalList:
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
         else:
             AltFuelCostBackup = AltFuelCostBackup
+
+        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
            
         
 ##################################################################################################
@@ -2533,6 +2593,7 @@ for interest in CostOfCapitalList:
 
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
+            AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
 
 
    # print("CapacityNeeded:" , CapacityNeeded)
@@ -2593,7 +2654,6 @@ for interest in CostOfCapitalList:
                 FuelEscalationBackup = FuelIndexDummy
        
        
-            years=["year2019: ", "year2020: ","year2021: ","year2022: ","year2023: ","year2024: ","year2025: ","year2026: ","year2027: ","year2028: ","year2029: ","year2030: ","year2031: ","year2032: ","year2033: ","year2034: ","year2035: ","year2036: ","year2037: ","year2038: ","year2039: ","year2040: ","year2041: ","year2042: ","year2043: ","year2044: ","year2045: ","year2046: ","year2047: ","year2048: ","year2049: ","year2050: ","year2051: ","year2052: ","year2053: ","year2054: ","year2055: ","year2056: ","year2057: ","year2058: ","year2059: ","year2060: "]
 
 
             pd.set_option('display.max_columns', None)
@@ -2605,20 +2665,29 @@ for interest in CostOfCapitalList:
             CapitalCosts = [TotalCapitalCost+OneTimeCosts]
             OMtList = [0]
             FuelList = [0]
+            RefurbishmentList = [0]
+            DecommissionList = [0]
             for t in range(1,NumberOfYears+1):
                 Ft = (AnnualFuelCost*FuelEscalation[t])
                 OMt = (TotalOMCost)
                 FuelList.append(Ft)
                 OMtList.append(OMt)
-                if GenerationInput == 'Nuclear' and t % CoreLife == 0:
-                    CapitalCosts.append(float(IntermittentCosts))
-                else:
-                    CapitalCosts.append(0)
-            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, OMtList, FuelList)), columns = ['Year', 'CapInv.', 'O&M', 'FuelCost'])
-            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']
+                CapitalCosts.append(0)
+            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                RefurbishmentList.append(float(IntermittentCosts))
+            else:
+                RefurbishmentList.append(0)
+            if t == NumberOfYears:
+                DecommissionList.append(AnnualDecommissionCost)
+            else:
+                DecommissionList.append(0)
+            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
+            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
             dfPrimary['CapInv.'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['CapInv.']), axis=1)
             dfPrimary['FuelCost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['FuelCost']), axis=1)
+            dfPrimary['Refurbishment Cost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Refurbishment Cost']), axis=1)
+            dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
 
             
             PrimaryNPV= np.npv(interest, dfPrimary['Total'])
@@ -2965,6 +3034,7 @@ for interest in CostOfCapitalList:
             CoreLife = dfInputs['Core Life (Years)'][1]
             CoreLifeMedian = dfInputs['Core Life (Years)'][1]
             NumberOfYearsMedian= dfInputs['Plant Life (Years)'][1]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][1]
 
             
             
@@ -3008,6 +3078,7 @@ for interest in CostOfCapitalList:
             NumberOfYearsMedian = 0
             CoreLife = 0
             CoreLifeMedian = 0
+            DecommissionCost= 0
            
             
             FixedOMCostBest  = 0
@@ -3050,6 +3121,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian= 0
             NumberOfYearsMedian =dfInputs['Plant Life (Years)'][7]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][7]
 
             
             
@@ -3092,6 +3164,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian = 0
             NumberOfYearsMedian = dfInputs['Plant Life (Years)'][4]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][4]
 
            
             
@@ -3270,6 +3343,11 @@ for interest in CostOfCapitalList:
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
         else:
             AltFuelCostBackup = AltFuelCostBackup
+            
+        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
            
         
 ##################################################################################################
@@ -3292,6 +3370,7 @@ for interest in CostOfCapitalList:
 
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
+            AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
 
 
    # print("CapacityNeeded:" , CapacityNeeded)
@@ -3351,9 +3430,6 @@ for interest in CostOfCapitalList:
             else:
                 FuelEscalationBackup = FuelIndexDummy
        
-       
-            years=["year2019: ", "year2020: ","year2021: ","year2022: ","year2023: ","year2024: ","year2025: ","year2026: ","year2027: ","year2028: ","year2029: ","year2030: ","year2031: ","year2032: ","year2033: ","year2034: ","year2035: ","year2036: ","year2037: ","year2038: ","year2039: ","year2040: ","year2041: ","year2042: ","year2043: ","year2044: ","year2045: ","year2046: ","year2047: ","year2048: ","year2049: ","year2050: ","year2051: ","year2052: ","year2053: ","year2054: ","year2055: ","year2056: ","year2057: ","year2058: ","year2059: ","year2060: "]
-
 
             pd.set_option('display.max_columns', None)
             pd.set_option('display.max_rows', None)
@@ -3364,20 +3440,29 @@ for interest in CostOfCapitalList:
             CapitalCosts = [TotalCapitalCost+OneTimeCosts]
             OMtList = [0]
             FuelList = [0]
+            RefurbishmentList = [0]
+            DecommissionList = [0]
             for t in range(1,NumberOfYears+1):
                 Ft = (AnnualFuelCost*FuelEscalation[t])
                 OMt = (TotalOMCost)
                 FuelList.append(Ft)
                 OMtList.append(OMt)
-                if GenerationInput == 'Nuclear' and t % CoreLife == 0:
-                    CapitalCosts.append(float(IntermittentCosts))
-                else:
-                    CapitalCosts.append(0)
-            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, OMtList, FuelList)), columns = ['Year', 'CapInv.', 'O&M', 'FuelCost'])
-            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']
+                CapitalCosts.append(0)
+            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                RefurbishmentList.append(float(IntermittentCosts))
+            else:
+                RefurbishmentList.append(0)
+            if t == NumberOfYears:
+                DecommissionList.append(AnnualDecommissionCost)
+            else:
+                DecommissionList.append(0)
+            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
+            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
             dfPrimary['CapInv.'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['CapInv.']), axis=1)
             dfPrimary['FuelCost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['FuelCost']), axis=1)
+            dfPrimary['Refurbishment Cost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Refurbishment Cost']), axis=1)
+            dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
 
             
             PrimaryNPV= np.npv(interest, dfPrimary['Total'])
@@ -3699,6 +3784,7 @@ for interest in CostOfCapitalList:
             CoreLife = dfInputs['Core Life (Years)'][1]
             CoreLifeMedian = dfInputs['Core Life (Years)'][1]
             NumberOfYearsMedian= dfInputs['Plant Life (Years)'][1]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][1]
 
             
             
@@ -3743,6 +3829,7 @@ for interest in CostOfCapitalList:
             NumberOfYearsMedian = 0
             CoreLife = 0
             CoreLifeMedian = 0
+            DecommissionCost= 0
            
             
             FixedOMCostBest  = 0
@@ -3786,6 +3873,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian= 0
             NumberOfYearsMedian =dfInputs['Plant Life (Years)'][7]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][7]
 
             
             
@@ -3829,6 +3917,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian = 0
             NumberOfYearsMedian = dfInputs['Plant Life (Years)'][4]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][4]
 
            
             
@@ -4009,6 +4098,11 @@ for interest in CostOfCapitalList:
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
         else:
             AltFuelCostBackup = AltFuelCostBackup
+            
+        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
            
         
 ##################################################################################################
@@ -4031,6 +4125,7 @@ for interest in CostOfCapitalList:
 
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
+            AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
 
 
    # print("CapacityNeeded:" , CapacityNeeded)
@@ -4090,9 +4185,6 @@ for interest in CostOfCapitalList:
             else:
                 FuelEscalationBackup = FuelIndexDummy
        
-       
-            years=["year2019: ", "year2020: ","year2021: ","year2022: ","year2023: ","year2024: ","year2025: ","year2026: ","year2027: ","year2028: ","year2029: ","year2030: ","year2031: ","year2032: ","year2033: ","year2034: ","year2035: ","year2036: ","year2037: ","year2038: ","year2039: ","year2040: ","year2041: ","year2042: ","year2043: ","year2044: ","year2045: ","year2046: ","year2047: ","year2048: ","year2049: ","year2050: ","year2051: ","year2052: ","year2053: ","year2054: ","year2055: ","year2056: ","year2057: ","year2058: ","year2059: ","year2060: "]
-
 
             pd.set_option('display.max_columns', None)
             pd.set_option('display.max_rows', None)
@@ -4103,20 +4195,29 @@ for interest in CostOfCapitalList:
             CapitalCosts = [TotalCapitalCost+OneTimeCosts]
             OMtList = [0]
             FuelList = [0]
+            RefurbishmentList = [0]
+            DecommissionList = [0]
             for t in range(1,NumberOfYears+1):
                 Ft = (AnnualFuelCost*FuelEscalation[t])
                 OMt = (TotalOMCost)
                 FuelList.append(Ft)
                 OMtList.append(OMt)
-                if GenerationInput == 'Nuclear' and t % CoreLife == 0:
-                    CapitalCosts.append(float(IntermittentCosts))
-                else:
-                    CapitalCosts.append(0)
-            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, OMtList, FuelList)), columns = ['Year', 'CapInv.', 'O&M', 'FuelCost'])
-            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']
+                CapitalCosts.append(0)
+            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                RefurbishmentList.append(float(IntermittentCosts))
+            else:
+                RefurbishmentList.append(0)
+            if t == NumberOfYears:
+                DecommissionList.append(AnnualDecommissionCost)
+            else:
+                DecommissionList.append(0)
+            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
+            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
             dfPrimary['CapInv.'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['CapInv.']), axis=1)
             dfPrimary['FuelCost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['FuelCost']), axis=1)
+            dfPrimary['Refurbishment Cost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Refurbishment Cost']), axis=1)
+            dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
 
             
             PrimaryNPV= np.npv(interest, dfPrimary['Total'])
@@ -4428,6 +4529,7 @@ for interest in CostOfCapitalList:
             CoreLife = dfInputs['Core Life (Years)'][1]
             CoreLifeMedian = dfInputs['Core Life (Years)'][1]
             NumberOfYearsMedian= dfInputs['Plant Life (Years)'][1]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][1]
 
             
             
@@ -4473,6 +4575,7 @@ for interest in CostOfCapitalList:
             NumberOfYearsMedian =1
             CoreLife = 0
             CoreLifeMedian = 0
+            DecommissionCost= 0
            
             
             FixedOMCostBest  = 0
@@ -4517,6 +4620,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian= 0
             NumberOfYearsMedian =dfInputs['Plant Life (Years)'][7]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][7]
 
             
             
@@ -4561,6 +4665,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian = 0
             NumberOfYearsMedian = dfInputs['Plant Life (Years)'][4]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][4]
 
            
             
@@ -4746,6 +4851,11 @@ for interest in CostOfCapitalList:
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
         else:
             AltFuelCostBackup = AltFuelCostBackup
+            
+        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
            
         
 ##################################################################################################
@@ -4768,6 +4878,7 @@ for interest in CostOfCapitalList:
 
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
+            AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
 
 
    # print("CapacityNeeded:" , CapacityNeeded)
@@ -4828,7 +4939,6 @@ for interest in CostOfCapitalList:
                 FuelEscalationBackup = FuelIndexDummy
        
        
-            years=["year2019: ", "year2020: ","year2021: ","year2022: ","year2023: ","year2024: ","year2025: ","year2026: ","year2027: ","year2028: ","year2029: ","year2030: ","year2031: ","year2032: ","year2033: ","year2034: ","year2035: ","year2036: ","year2037: ","year2038: ","year2039: ","year2040: ","year2041: ","year2042: ","year2043: ","year2044: ","year2045: ","year2046: ","year2047: ","year2048: ","year2049: ","year2050: ","year2051: ","year2052: ","year2053: ","year2054: ","year2055: ","year2056: ","year2057: ","year2058: ","year2059: ","year2060: "]
 
 
             pd.set_option('display.max_columns', None)
@@ -4840,20 +4950,29 @@ for interest in CostOfCapitalList:
             CapitalCosts = [TotalCapitalCost+OneTimeCosts]
             OMtList = [0]
             FuelList = [0]
+            RefurbishmentList = [0]
+            DecommissionList = [0]
             for t in range(1,NumberOfYears+1):
                 Ft = (AnnualFuelCost*FuelEscalation[t])
                 OMt = (TotalOMCost)
                 FuelList.append(Ft)
                 OMtList.append(OMt)
-                if GenerationInput == 'Nuclear' and t % CoreLife == 0:
-                    CapitalCosts.append(float(IntermittentCosts))
-                else:
-                    CapitalCosts.append(0)
-            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, OMtList, FuelList)), columns = ['Year', 'CapInv.', 'O&M', 'FuelCost'])
-            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']
+                CapitalCosts.append(0)
+            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                RefurbishmentList.append(float(IntermittentCosts))
+            else:
+                RefurbishmentList.append(0)
+            if t == NumberOfYears:
+                DecommissionList.append(AnnualDecommissionCost)
+            else:
+                DecommissionList.append(0)
+            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
+            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
             dfPrimary['CapInv.'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['CapInv.']), axis=1)
             dfPrimary['FuelCost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['FuelCost']), axis=1)
+            dfPrimary['Refurbishment Cost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Refurbishment Cost']), axis=1)
+            dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
 
             
             PrimaryNPV= np.npv(interest, dfPrimary['Total'])
@@ -5166,6 +5285,7 @@ for interest in CostOfCapitalList:
             CoreLife = dfInputs['Core Life (Years)'][1]
             CoreLifeMedian = dfInputs['Core Life (Years)'][1]
             NumberOfYearsMedian= dfInputs['Plant Life (Years)'][1]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][1]
 
             
             
@@ -5212,6 +5332,7 @@ for interest in CostOfCapitalList:
             NumberOfYearsMedian = 0
             CoreLife = 0
             CoreLifeMedian = 0
+            DecommissionCost= 0
            
             
             FixedOMCostBest  = 0
@@ -5257,6 +5378,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian= 0
             NumberOfYearsMedian =dfInputs['Plant Life (Years)'][7]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][7]
 
             
             
@@ -5302,6 +5424,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian = 0
             NumberOfYearsMedian = dfInputs['Plant Life (Years)'][4]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][4]
 
            
             
@@ -5490,6 +5613,11 @@ for interest in CostOfCapitalList:
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
         else:
             AltFuelCostBackup = AltFuelCostBackup
+            
+        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
         
         
 ##################################################################################################
@@ -5512,6 +5640,7 @@ for interest in CostOfCapitalList:
 
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
+            AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
 
 
    # print("CapacityNeeded:" , CapacityNeeded)
@@ -5572,7 +5701,6 @@ for interest in CostOfCapitalList:
                 FuelEscalationBackup = FuelIndexDummy
        
        
-            years=["year2019: ", "year2020: ","year2021: ","year2022: ","year2023: ","year2024: ","year2025: ","year2026: ","year2027: ","year2028: ","year2029: ","year2030: ","year2031: ","year2032: ","year2033: ","year2034: ","year2035: ","year2036: ","year2037: ","year2038: ","year2039: ","year2040: ","year2041: ","year2042: ","year2043: ","year2044: ","year2045: ","year2046: ","year2047: ","year2048: ","year2049: ","year2050: ","year2051: ","year2052: ","year2053: ","year2054: ","year2055: ","year2056: ","year2057: ","year2058: ","year2059: ","year2060: "]
 
 
             pd.set_option('display.max_columns', None)
@@ -5584,21 +5712,29 @@ for interest in CostOfCapitalList:
             CapitalCosts = [TotalCapitalCost+OneTimeCosts]
             OMtList = [0]
             FuelList = [0]
+            RefurbishmentList = [0]
+            DecommissionList = [0]
             for t in range(1,NumberOfYears+1):
                 Ft = (AnnualFuelCost*FuelEscalation[t])
                 OMt = (TotalOMCost)
                 FuelList.append(Ft)
                 OMtList.append(OMt)
-                if GenerationInput == 'Nuclear' and t % CoreLife == 0:
-                    CapitalCosts.append(float(IntermittentCosts))
-                else:
-                    CapitalCosts.append(0)
-            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, OMtList, FuelList)), columns = ['Year', 'CapInv.', 'O&M', 'FuelCost'])
-            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']
+                CapitalCosts.append(0)
+            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                RefurbishmentList.append(float(IntermittentCosts))
+            else:
+                RefurbishmentList.append(0)
+            if t == NumberOfYears:
+                DecommissionList.append(AnnualDecommissionCost)
+            else:
+                DecommissionList.append(0)
+            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
+            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
             dfPrimary['CapInv.'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['CapInv.']), axis=1)
             dfPrimary['FuelCost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['FuelCost']), axis=1)
-
+            dfPrimary['Refurbishment Cost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Refurbishment Cost']), axis=1)
+            dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
             
             PrimaryNPV= np.npv(interest, dfPrimary['Total'])
             PrimaryNPV = np.where(np.isnan(PrimaryNPV), 0, PrimaryNPV)
@@ -5909,6 +6045,7 @@ for interest in CostOfCapitalList:
             CoreLife = dfInputs['Core Life (Years)'][1]
             CoreLifeMedian = dfInputs['Core Life (Years)'][1]
             NumberOfYearsMedian= dfInputs['Plant Life (Years)'][1]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][1]
 
             
             
@@ -5956,6 +6093,7 @@ for interest in CostOfCapitalList:
             NumberOfYearsMedian = 0
             CoreLife = 0
             CoreLifeMedian = 0
+            DecommissionCost= 0
            
             
             FixedOMCostBest  = 0
@@ -6002,6 +6140,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian= 0
             NumberOfYearsMedian =dfInputs['Plant Life (Years)'][7]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][7]
 
             
             
@@ -6048,6 +6187,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian = 0
             NumberOfYearsMedian = dfInputs['Plant Life (Years)'][4]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][4]
 
            
             
@@ -6240,6 +6380,11 @@ for interest in CostOfCapitalList:
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
         else:
             AltFuelCostBackup = AltFuelCostBackup
+            
+        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
            
         
 ##################################################################################################
@@ -6262,6 +6407,7 @@ for interest in CostOfCapitalList:
 
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
+            AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
 
 
    # print("CapacityNeeded:" , CapacityNeeded)
@@ -6321,9 +6467,6 @@ for interest in CostOfCapitalList:
             else:
                 FuelEscalationBackup = FuelIndexDummy
        
-       
-            years=["year2019: ", "year2020: ","year2021: ","year2022: ","year2023: ","year2024: ","year2025: ","year2026: ","year2027: ","year2028: ","year2029: ","year2030: ","year2031: ","year2032: ","year2033: ","year2034: ","year2035: ","year2036: ","year2037: ","year2038: ","year2039: ","year2040: ","year2041: ","year2042: ","year2043: ","year2044: ","year2045: ","year2046: ","year2047: ","year2048: ","year2049: ","year2050: ","year2051: ","year2052: ","year2053: ","year2054: ","year2055: ","year2056: ","year2057: ","year2058: ","year2059: ","year2060: "]
-
 
             pd.set_option('display.max_columns', None)
             pd.set_option('display.max_rows', None)
@@ -6334,20 +6477,29 @@ for interest in CostOfCapitalList:
             CapitalCosts = [TotalCapitalCost+OneTimeCosts]
             OMtList = [0]
             FuelList = [0]
+            RefurbishmentList = [0]
+            DecommissionList = [0]
             for t in range(1,NumberOfYears+1):
                 Ft = (AnnualFuelCost*FuelEscalation[t])
                 OMt = (TotalOMCost)
                 FuelList.append(Ft)
                 OMtList.append(OMt)
-                if GenerationInput == 'Nuclear' and t % CoreLife == 0:
-                    CapitalCosts.append(float(IntermittentCosts))
-                else:
-                    CapitalCosts.append(0)
-            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, OMtList, FuelList)), columns = ['Year', 'CapInv.', 'O&M', 'FuelCost'])
-            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']
+                CapitalCosts.append(0)
+            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                RefurbishmentList.append(float(IntermittentCosts))
+            else:
+                RefurbishmentList.append(0)
+            if t == NumberOfYears:
+                DecommissionList.append(AnnualDecommissionCost)
+            else:
+                DecommissionList.append(0)
+            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
+            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
             dfPrimary['CapInv.'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['CapInv.']), axis=1)
             dfPrimary['FuelCost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['FuelCost']), axis=1)
+            dfPrimary['Refurbishment Cost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Refurbishment Cost']), axis=1)
+            dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
 
             
             PrimaryNPV= np.npv(interest, dfPrimary['Total'])
@@ -6675,6 +6827,7 @@ for interest in CostOfCapitalList:
             CoreLife = dfInputs['Core Life (Years)'][1]
             CoreLifeMedian = dfInputs['Core Life (Years)'][1]
             NumberOfYearsMedian= dfInputs['Plant Life (Years)'][1]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][1]
 
             
             
@@ -6723,6 +6876,7 @@ for interest in CostOfCapitalList:
             NumberOfYearsMedian = 0
             CoreLife = 0
             CoreLifeMedian = 0
+            DecommissionCost= 0
            
             
             FixedOMCostBest  = 0
@@ -6770,6 +6924,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian= 0
             NumberOfYearsMedian =dfInputs['Plant Life (Years)'][7]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][7]
 
             
             
@@ -6817,6 +6972,7 @@ for interest in CostOfCapitalList:
             CoreLife = 0
             CoreLifeMedian = 0
             NumberOfYearsMedian = dfInputs['Plant Life (Years)'][4]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][4]
 
            
             
@@ -7013,6 +7169,11 @@ for interest in CostOfCapitalList:
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
         else:
             AltFuelCostBackup = AltFuelCostBackup
+            
+        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
            
         
 ##################################################################################################
@@ -7035,6 +7196,7 @@ for interest in CostOfCapitalList:
 
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
+            AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
 
 
    # print("CapacityNeeded:" , CapacityNeeded)
@@ -7095,8 +7257,6 @@ for interest in CostOfCapitalList:
                 FuelEscalationBackup = FuelIndexDummy
        
        
-            years=["year2019: ", "year2020: ","year2021: ","year2022: ","year2023: ","year2024: ","year2025: ","year2026: ","year2027: ","year2028: ","year2029: ","year2030: ","year2031: ","year2032: ","year2033: ","year2034: ","year2035: ","year2036: ","year2037: ","year2038: ","year2039: ","year2040: ","year2041: ","year2042: ","year2043: ","year2044: ","year2045: ","year2046: ","year2047: ","year2048: ","year2049: ","year2050: ","year2051: ","year2052: ","year2053: ","year2054: ","year2055: ","year2056: ","year2057: ","year2058: ","year2059: ","year2060: "]
-
 
             pd.set_option('display.max_columns', None)
             pd.set_option('display.max_rows', None)
@@ -7107,20 +7267,29 @@ for interest in CostOfCapitalList:
             CapitalCosts = [TotalCapitalCost+OneTimeCosts]
             OMtList = [0]
             FuelList = [0]
+            RefurbishmentList = [0]
+            DecommissionList = [0]
             for t in range(1,NumberOfYears+1):
                 Ft = (AnnualFuelCost*FuelEscalation[t])
                 OMt = (TotalOMCost)
                 FuelList.append(Ft)
                 OMtList.append(OMt)
-                if GenerationInput == 'Nuclear' and t % CoreLife == 0:
-                    CapitalCosts.append(float(IntermittentCosts))
-                else:
-                    CapitalCosts.append(0)
-            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, OMtList, FuelList)), columns = ['Year', 'CapInv.', 'O&M', 'FuelCost'])
-            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']
+                CapitalCosts.append(0)
+            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                RefurbishmentList.append(float(IntermittentCosts))
+            else:
+                RefurbishmentList.append(0)
+            if t == NumberOfYears:
+                DecommissionList.append(AnnualDecommissionCost)
+            else:
+                DecommissionList.append(0)
+            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
+            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
             dfPrimary['CapInv.'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['CapInv.']), axis=1)
             dfPrimary['FuelCost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['FuelCost']), axis=1)
+            dfPrimary['Refurbishment Cost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Refurbishment Cost']), axis=1)
+            dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
 
             
             PrimaryNPV= np.npv(interest, dfPrimary['Total'])
@@ -7308,6 +7477,802 @@ for interest in CostOfCapitalList:
  ExcelNaturalGasDiesel4.loc[len(ExcelNaturalGasDiesel4)] = NaturalGasDiesel4
  ExcelDieselNaturalGas3.loc[len(ExcelDieselNaturalGas3)] = DieselNaturalGas3
  ExcelDieselNaturalGas4.loc[len(ExcelDieselNaturalGas4)] = DieselNaturalGas4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ResultsListScenario1Nuclear = []
+ ResultsListScenario1Diesel = []
+ ResultsListScenario1NaturalGas = [] 
+
+ ResultsListScenario2Nuclear = []
+ ResultsListScenario2Diesel = []
+ ResultsListScenario2NaturalGas = []
+
+ ResultsListScenario3Nuclear = []
+ ResultsListScenario3Diesel = []
+ ResultsListScenario3NaturalGas = []
+
+ ResultsListScenario4Nuclear = []
+ ResultsListScenario4Diesel = []
+ ResultsListScenario4NaturalGas = []
+
+ ResultsListDummy = []
+
+ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario4']:
+  for GenerationInput in ['None','Nuclear', 'Diesel','NaturalGas']:
+    for GenerationInputBackup in ['Nuclear', 'Diesel','NaturalGas', 'None']:
+###############################################
+        if Scenario == 'Scenario1':
+            UtilityPowerGeneration = dfAssumptions['Input'][6]
+            PowerGeneration= dfAssumptions['Input'][7]
+            PowerGenerationBackup =  dfAssumptions['Input'][8]
+        elif Scenario == 'Scenario2':
+            UtilityPowerGeneration = dfAssumptions['Input'][12]
+            PowerGeneration =  dfAssumptions['Input'][13]
+            PowerGenerationBackup =  dfAssumptions['Input'][14]
+        elif Scenario == 'Scenario3':
+            UtilityPowerGeneration = dfAssumptions['Input'][17]
+            PowerGeneration =  dfAssumptions['Input'][18]
+            PowerGenerationBackup =  dfAssumptions['Input'][19]
+        elif Scenario == 'Scenario4':
+            UtilityPowerGeneration =   dfAssumptions['Input'][22]
+            PowerGeneration = dfAssumptions['Input'][23]
+            PowerGenerationBackup =  dfAssumptions['Input'][24]
+        else:
+            print("error")
+
+        LNG = dfInputs['LNG cost ($/KWh)'][7]
+        LNGMedian = dfInputs['LNG cost ($/KWh)'][7]
+        LNGBest = dfInputs['LNG cost ($/KWh)'][6]
+        LNGWorst = dfInputs['LNG cost ($/KWh)'][8]
+        
+        LNGBackup = dfInputs['LNG cost ($/KWh)'][7]
+        LNGBackupMedian = dfInputs['LNG cost ($/KWh)'][7]
+        LNGBackupBest = dfInputs['LNG cost ($/KWh)'][6]
+        LNGBackupWorst = dfInputs['LNG cost ($/KWh)'][8]
+            
+
+        if GenerationInput == 'Nuclear':
+            ####Nuclear
+            CapacityFactor = dfInputs['Capacity Factor (Decimal)'][1] #
+            CapacityFactorMedian = dfInputs['Capacity Factor (Decimal)'][1] #
+            FuelCost =  dfInputs['Fuel Cost ($/mmBTU)'][1]   #  $/mmBTU
+            FuelCostMedian =  dfInputs['Fuel Cost ($/mmBTU)'][1]   #  $/mmBTU
+            HeatRate =   dfInputs['Heat Rate (mmBTU/kWh)'][1]#  mmBTU/kWh
+            HeatRateMedian = dfInputs['Heat Rate (mmBTU/kWh)'][1]
+            AltFuelCost = 0  #  $/kWh
+            AltFuelCostMedian = 0  #  $/kWh
+            FixedOMCost = dfInputs['Fixed O&M Cost ($/kWe)'][1]   # $/KWe
+            FixedOMCostMedian=  dfInputs['Fixed O&M Cost ($/kWe)'][1]# $/kWe
+            VariableOMCost =  dfInputs['Variable OM Cost ($/kWh)'][1]  # $/kWh
+            VariableOMCostMedian = dfInputs['Variable OM Cost ($/kWh)'][1]
+            OneTimeCosts =    dfInputs['One Time Costs at beg($)'][1]  # Miscellanious costs in $
+            IntermittentCosts =dfInputs['Refurbishment Cost ($)'][1]   # $ (refueling for nuclear) else enter 0
+            IntermittentCostMedian = dfInputs['Refurbishment Cost ($)'][1] 
+            CapitalCost = dfInputs['Capital Cost ($/kWe)'][1] #$/kWe
+            CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][1]
+            NumberOfYears= dfInputs['Plant Life (Years)'][1]
+            CoreLife = dfInputs['Core Life (Years)'][1]
+            CoreLifeMedian = dfInputs['Core Life (Years)'][1]
+            NumberOfYearsMedian= dfInputs['Plant Life (Years)'][1]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][1]
+            DecommissionCostMedian= dfInputs['Decomissioning cost ($/kWh)'][1]
+            
+            
+            DecommissionCostBest = dfInputs['Decomissioning cost ($/kWh)'][0]
+            DecommissionCostWorst = dfInputs['Decomissioning cost ($/kWh)'][2]
+            FixedOMCostBest  = dfInputs['Fixed O&M Cost ($/kWe)'][0]
+            FixedOMCostWorst  = dfInputs['Fixed O&M Cost ($/kWe)'][2]
+            CapitalCostBest =  dfInputs['Capital Cost ($/kWe)'][0]
+            CapitalCostWorst = dfInputs['Capital Cost ($/kWe)'][2]
+            CapacityFactorBest = dfInputs['Capacity Factor (Decimal)'][0]
+            CapacityFactorWorst = dfInputs['Capacity Factor (Decimal)'][2]
+            AltFuelCostBest = 0
+            AltFuelCostWorst =0
+            VariableOMCostBest= dfInputs['Variable OM Cost ($/kWh)'][0]
+            VariableOMCostWorst = dfInputs['Variable OM Cost ($/kWh)'][2]
+            IntermittentCostBest = dfInputs['Refurbishment Cost ($)'][0]
+            IntermittentCostWorst = dfInputs['Refurbishment Cost ($)'][2] 
+            HeatRateBest = dfInputs['Heat Rate (mmBTU/kWh)'][0]
+            HeatRateWorst = dfInputs['Heat Rate (mmBTU/kWh)'][2]
+            FuelCostBest = dfInputs['Fuel Cost ($/mmBTU)'][0]
+            FuelCostWorst = dfInputs['Fuel Cost ($/mmBTU)'][2]
+            NumberOfYearsBest = dfInputs['Plant Life (Years)'][0]
+            NumberOfYearsWorst = dfInputs['Plant Life (Years)'][2] 
+            CoreLifeBest = dfInputs['Core Life (Years)'][0]
+            CoreLifeWorst = dfInputs['Core Life (Years)'][2]
+            
+            
+        elif GenerationInput == 'None':
+            CapacityFactor = 1 #
+            CapacityFactorMedian = 1
+            FuelCost = 0     #  $/mmBTU
+            FuelCostMedian = 0
+            HeatRate = 0  #  mmBTU/kWh
+            HeatRateMedian = 0
+            AltFuelCost = 0  #  $/kWh
+            AltFuelCostMedian = 0
+            FixedOMCost = 0
+            FixedOMCostMedian= 0   # $/kWe
+            VariableOMCost = 0   # $/kWh
+            VariableOMCostMedian = 0
+            OneTimeCosts =0        # Miscellanious costs in $
+            IntermittentCosts = 0   # $ (refueling for nuclear) else enter 0
+            IntermittentCostMedian = 0
+            CapitalCost = 0  #$/kWe
+            CapitalCostMedian =0
+            NumberOfYears=0
+            NumberOfYearsMedian = 0
+            CoreLife = 0
+            CoreLifeMedian = 0
+            DecommissionCost= 0
+            DecommissionCostMedian = 0
+           
+            DecommissionCostBest = 0
+            DecommissionCostWorst = 0
+            FixedOMCostBest  = 0
+            FixedOMCostWorst  = 0
+            CapitalCostBest =  0
+            CapitalCostWorst = 0
+            CapacityFactorBest = 1
+            CapacityFactorWorst = 1
+            AltFuelCostBest = 0
+            AltFuelCostWorst = 0
+            VariableOMCostBest = 0
+            VariableOMCostWorst = 0
+            IntermittentCostBest = 0
+            IntermittentCostWorst = 0
+            HeatRateBest = 0
+            HeatRateWorst = 0
+            FuelCostBest = 0
+            FuelCostWorst = 0
+            NumberOfYearsBest = 0 
+            NumberOfYearsWorst = 0
+            CoreLifeBest = 0
+            CoreLifeWorst = 0
+            
+
+        elif GenerationInput == 'NaturalGas':
+            #NaturalGas
+            CapacityFactor = dfInputs['Capacity Factor (Decimal)'][7] #
+            CapacityFactorMedian = dfInputs['Capacity Factor (Decimal)'][7] #
+            FuelCost =   dfInputs['Fuel Cost ($/mmBTU)'][7]   #  $/mmBTU
+            FuelCostMedian =   dfInputs['Fuel Cost ($/mmBTU)'][7]   #  $/mmBTU
+            HeatRate =   dfInputs['Heat Rate (mmBTU/kWh)'][7]#  mmBTU/kWh
+            HeatRateMedian = dfInputs['Heat Rate (mmBTU/kWh)'][7]
+            AltFuelCost =  0 #  $/kWh
+            AltFuelCostMedian =  0
+            FixedOMCost = dfInputs['Fixed O&M Cost ($/kWe)'][7]
+            FixedOMCostMedian=  dfInputs['Fixed O&M Cost ($/kWe)'][7] # $/kWe
+            VariableOMCost = dfInputs['Variable OM Cost ($/kWh)'][7]  # $/kWh
+            VariableOMCostMedian =  dfInputs['Variable OM Cost ($/kWh)'][7]
+            OneTimeCosts =    dfInputs['One Time Costs at beg($)'][7]  # Miscellanious costs in $
+            IntermittentCosts = 0   # $ (refueling for nuclear) else enter 0
+            IntermittentCostMedian = 0
+            CapitalCost = dfInputs['Capital Cost ($/kWe)'][7]  #$/kWe
+            CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][7]
+            NumberOfYears =dfInputs['Plant Life (Years)'][7]
+            CoreLife = 0
+            CoreLifeMedian= 0
+            NumberOfYearsMedian =dfInputs['Plant Life (Years)'][7]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][7]
+            DecommissionCostMedian= dfInputs['Decomissioning cost ($/kWh)'][7]
+            
+            DecommissionCostBest = dfInputs['Decomissioning cost ($/kWh)'][6]
+            DecommissionCostWorst = dfInputs['Decomissioning cost ($/kWh)'][8]
+            FixedOMCostBest  = dfInputs['Fixed O&M Cost ($/kWe)'][6]
+            FixedOMCostWorst  = dfInputs['Fixed O&M Cost ($/kWe)'][8]
+            CapitalCostBest =  dfInputs['Capital Cost ($/kWe)'][6]
+            CapitalCostWorst = dfInputs['Capital Cost ($/kWe)'][8]
+            CapacityFactorBest = dfInputs['Capacity Factor (Decimal)'][6]
+            CapacityFactorWorst = dfInputs['Capacity Factor (Decimal)'][8]
+            AltFuelCostBest = 0
+            AltFuelCostWorst = 0
+            VariableOMCostBest = dfInputs['Variable OM Cost ($/kWh)'][6]
+            VariableOMCostWorst = dfInputs['Variable OM Cost ($/kWh)'][8]
+            IntermittentCostBest = 0
+            IntermittentCostWorst =0
+            HeatRateBest = dfInputs['Heat Rate (mmBTU/kWh)'][6]
+            HeatRateWorst = dfInputs['Heat Rate (mmBTU/kWh)'][8]
+            FuelCostBest = dfInputs['Fuel Cost ($/mmBTU)'][6]
+            FuelCostWorst = dfInputs['Fuel Cost ($/mmBTU)'][8]
+            NumberOfYearsBest = dfInputs['Plant Life (Years)'][6]
+            NumberOfYearsWorst = dfInputs['Plant Life (Years)'][8]
+            CoreLifeBest = 0
+            CoreLifeWorst =0
+            
+        elif GenerationInput == 'Diesel':
+            #Diesel
+            CapacityFactor = dfInputs['Capacity Factor (Decimal)'][4] #
+            CapacityFactorMedian = dfInputs['Capacity Factor (Decimal)'][4] #
+            FuelCost =  dfInputs['Fuel Cost ($/mmBTU)'][4]    #  $/mmBTU
+            FuelCostMedian =  dfInputs['Fuel Cost ($/mmBTU)'][4]    #  $/mmBTU
+            HeatRate =  dfInputs['Heat Rate (mmBTU/kWh)'][4] #  mmBTU/kWh
+            HeatRateMedian =  dfInputs['Heat Rate (mmBTU/kWh)'][4] #  mmBTU/kWh
+            AltFuelCost = 0  #  $/kWh
+            AltFuelCostMedian = 0
+            FixedOMCost =  dfInputs['Fixed O&M Cost ($/kWe)'][4]
+            FixedOMCostMedian=   dfInputs['Fixed O&M Cost ($/kWe)'][4] # $/kWe
+            VariableOMCost = dfInputs['Variable OM Cost ($/kWh)'][4]  # $/kWh
+            VariableOMCostMedian = dfInputs['Variable OM Cost ($/kWh)'][4]
+            OneTimeCosts =    dfInputs['One Time Costs at beg($)'][4]   # Miscellanious costs in $
+            IntermittentCosts =0    # $ (refueling for nuclear) else enter 0
+            IntermittentCostMedian = 0
+            CapitalCost = dfInputs['Capital Cost ($/kWe)'][4] #$/kWe
+            CapitalCostMedian = dfInputs['Capital Cost ($/kWe)'][4]
+            NumberOfYears = dfInputs['Plant Life (Years)'][4]
+            CoreLife = 0
+            CoreLifeMedian = 0
+            NumberOfYearsMedian = dfInputs['Plant Life (Years)'][4]
+            DecommissionCost= dfInputs['Decomissioning cost ($/kWh)'][4]
+            DecommissionCostMedian= dfInputs['Decomissioning cost ($/kWh)'][4]
+
+           
+            DecommissionCostBest = dfInputs['Decomissioning cost ($/kWh)'][3]
+            DecommissionCostWorst = dfInputs['Decomissioning cost ($/kWh)'][5]
+            FixedOMCostBest  = dfInputs['Fixed O&M Cost ($/kWe)'][3]
+            FixedOMCostWorst  = dfInputs['Fixed O&M Cost ($/kWe)'][5]
+            CapitalCostBest =  dfInputs['Capital Cost ($/kWe)'][3]
+            CapitalCostWorst = dfInputs['Capital Cost ($/kWe)'][5]
+            CapacityFactorBest = dfInputs['Capacity Factor (Decimal)'][3]
+            CapacityFactorWorst = dfInputs['Capacity Factor (Decimal)'][5]
+            AltFuelCostBest = 0
+            AltFuelCostWorst = 0
+            VariableOMCostBest = dfInputs['Variable OM Cost ($/kWh)'][3]
+            VariableOMCostWorst =dfInputs['Fuel Cost ($/KWh)'][5]
+            IntermittentCostBest = 0
+            IntermittentCostWorst = 0
+            HeatRateBest = dfInputs['Heat Rate (mmBTU/kWh)'][3]
+            HeatRateWorst = dfInputs['Heat Rate (mmBTU/kWh)'][5]
+            FuelCostBest = dfInputs['Fuel Cost ($/mmBTU)'][3]
+            FuelCostWorst = dfInputs['Fuel Cost ($/mmBTU)'][5]
+            NumberOfYearsBest = dfInputs['Plant Life (Years)'][3]
+            NumberOfYearsWorst = dfInputs['Plant Life (Years)'][5]
+            CoreLifeBest =0
+            CoreLifeWorst =0 
+        else:
+            print("error")
+       
+       
+        if GenerationInputBackup =='NaturalGas':
+            FuelCostBackup =   dfInputs['Fuel Cost ($/mmBTU)'][7]  #  $/mmBTU
+            FuelCostBackupMedian =   dfInputs['Fuel Cost ($/mmBTU)'][7]  #  $/mmBTU
+            HeatRateBackup = dfInputs['Heat Rate (mmBTU/kWh)'][7] #  mmBTU/kWh
+            HeatRateBackupMedian = dfInputs['Heat Rate (mmBTU/kWh)'][7] #  mmBTU/kWh
+            AltFuelCostBackup = 0  #  $/kWh
+            AltFuelCostBackupMedian = 0
+            FixedOMCostBackup = dfInputs['Fixed O&M Cost ($/kWe)'][7]
+            FixedOMCostBackupMedian=  dfInputs['Fixed O&M Cost ($/kWe)'][7] # $/kWe
+            VariableOMCostBackup = dfInputs['Variable OM Cost ($/kWh)'][7]   # $/kWh
+            VariableOMCostBackupMedian = dfInputs['Variable OM Cost ($/kWh)'][7]
+            OneTimeCostsBackup =    dfInputs['One Time Costs at beg($)'][7] # Miscellanious costs in $
+            CapitalCostBackupMedian = dfInputs['Capital Cost ($/kWe)'][7]
+            CapitalCostBackup = dfInputs['Capital Cost ($/kWe)'][7] #$/kWe
+            NumberOfYearsBackup = dfInputs['Plant Life (Years)'][7]
+            NumberOfYearsBackupMedian = dfInputs['Plant Life (Years)'][7]
+
+            
+            FixedOMCostBackupBest  = dfInputs['Fixed O&M Cost ($/kWe)'][6]
+            FixedOMCostBackupWorst  = dfInputs['Fixed O&M Cost ($/kWe)'][8]
+            CapitalCostBackupBest =  dfInputs['Capital Cost ($/kWe)'][6]
+            CapitalCostBackupWorst = dfInputs['Capital Cost ($/kWe)'][8]
+            AltFuelCostBackupBest = 0
+            AltFuelCostBackupWorst = 0
+            VariableOMCostBackupBest = dfInputs['Variable OM Cost ($/kWh)'][6]
+            VariableOMCostBackupWorst =dfInputs['Variable OM Cost ($/kWh)'][8] 
+            IntermittentCostBackupBest =0 
+            IntermittentCostBackupWorst =0 
+            HeatRateBackupBest = dfInputs['Heat Rate (mmBTU/kWh)'][6]
+            HeatRateBackupWorst = dfInputs['Heat Rate (mmBTU/kWh)'][8]
+            FuelCostBackupBest = dfInputs['Fuel Cost ($/mmBTU)'][6]
+            FuelCostBackupWorst = dfInputs['Fuel Cost ($/mmBTU)'][8]
+            NumberOfYearsBackupBest = dfInputs['Plant Life (Years)'][6]
+            NumberOfYearsBackupWorst =dfInputs['Plant Life (Years)'][8]
+            
+        elif GenerationInputBackup == 'None':
+            FuelCostBackup = 0     #  $/mmBTU
+            FuelCostBackupMedian = 0
+            HeatRateBackup = 0  #  mmBTU/kWh
+            HeatRateBackupMedian = 0
+            AltFuelCostBackup = 0  #  $/kWh
+            FixedOMCostBackup= 0
+            FixedOMCostBackupMedian= 0   # $/kWe
+            VariableOMCostBackupMedian = 0
+            VariableOMCostBackup = 0   # $/kWh
+            OneTimeCostsBackup =0        # Miscellanious costs in $
+            CapitalCostBackupMedian = 0
+            CapitalCostBackup = 0  #$/kWe
+            NumberOfYearsBackup=0
+            NumberOfYearsBackupMedian = 0
+            
+            
+            FixedOMCostBackupBest  = 0
+            FixedOMCostBackupWorst  = 0
+            CapitalCostBackupBest =  0
+            CapitalCostBackupWorst = 0
+            AltFuelCostBackupBest = 0
+            AltFuelCostBackupWorst = 0
+            VariableOMCostBackupBest = 0
+            VariableOMCostBackupWorst = 0
+            IntermittentCostBackupBest = 0
+            IntermittentCostBackupWorst = 0
+            HeatRateBackupBest = 0
+            HeatRateBackupWorst = 0
+            FuelCostBackupBest = 0
+            FuelCostBackupWorst = 0
+            NumberOfYearsBackupBest = 0
+            NumberOfYearsBackupWorst = 0
+            
+            
+        elif GenerationInputBackup == 'Diesel':
+            #Diesel
+            FuelCostBackup =  dfInputs['Fuel Cost ($/mmBTU)'][4]  #  $/mmBTU
+            FuelCostBackupMedian =  dfInputs['Fuel Cost ($/mmBTU)'][4]  #  $/mmBTU
+            HeatRateBackup = dfInputs['Heat Rate (mmBTU/kWh)'][4] #  mmBTU/kWh
+            HeatRateBackupMedian = dfInputs['Heat Rate (mmBTU/kWh)'][4] #  mmBTU/kWh
+            AltFuelCostBackup =0  #  $/kWh
+            AltFuelCostBackupMedian =0
+            FixedOMCostBackup = dfInputs['Fixed O&M Cost ($/kWe)'][4]
+            FixedOMCostBackupMedian=  dfInputs['Fixed O&M Cost ($/kWe)'][4] # $/kWe
+            VariableOMCostBackup =dfInputs['Variable OM Cost ($/kWh)'][4]   # $/kWh
+            VariableOMCostBackupMedian =dfInputs['Variable OM Cost ($/kWh)'][4]   # $/kWh
+
+            OneTimeCostsBackup =   dfInputs['One Time Costs at beg($)'][4]  # Miscellanious costs in $
+            CapitalCostBackupMedian = dfInputs['Capital Cost ($/kWe)'][4]
+            CapitalCostBackup =  dfInputs['Capital Cost ($/kWe)'][4] #$/kWe
+            NumberOfYearsBackup = dfInputs['Plant Life (Years)'][4]
+            NumberOfYearsBackupMedian = dfInputs['Plant Life (Years)'][4]
+            
+            
+            FixedOMCostBackupBest  = dfInputs['Fixed O&M Cost ($/kWe)'][3]
+            FixedOMCostBackupWorst  = dfInputs['Fixed O&M Cost ($/kWe)'][5]
+            CapitalCostBackupBest =  dfInputs['Capital Cost ($/kWe)'][3]
+            CapitalCostBackupWorst = dfInputs['Capital Cost ($/kWe)'][5]
+            AltFuelCostBackupBest = 0
+            AltFuelCostBackupWorst = 0
+            VariableOMCostBackupBest = dfInputs['Variable OM Cost ($/kWh)'][3]
+            VariableOMCostBackupWorst = dfInputs['Fuel Cost ($/KWh)'][5]
+            IntermittentCostBackupBest =0 
+            IntermittentCostBackupWorst =0 
+            HeatRateBackupBest = dfInputs['Heat Rate (mmBTU/kWh)'][3]
+            HeatRateBackupWorst = dfInputs['Heat Rate (mmBTU/kWh)'][5]
+            FuelCostBackupBest = dfInputs['Fuel Cost ($/mmBTU)'][3]
+            FuelCostBackupWorst = dfInputs['Fuel Cost ($/mmBTU)'][5]
+            NumberOfYearsBackupBest = dfInputs['Plant Life (Years)'][3]
+            NumberOfYearsBakupWorst = dfInputs['Plant Life (Years)'][5]
+            
+        elif GenerationInputBackup == 'Nuclear':
+            FuelCostBackup =  dfInputs['Fuel Cost ($/mmBTU)'][1]   #  $/mmBTU #######
+            FuelCostBackupMedian =  dfInputs['Fuel Cost ($/mmBTU)'][1]   #  $/mmBTU #######
+            HeatRateBackup =  dfInputs['Heat Rate (mmBTU/kWh)'][1] #  mmBTU/kWh   #######
+            HeatRateBackupMedian =  dfInputs['Heat Rate (mmBTU/kWh)'][1] #  mmBTU/kWh   #######
+            AltFuelCostBackup = 0#  $/kWh
+            AltFuelCostBackupMedian = 0
+            FixedOMCostBackupMedian=  dfInputs['Fixed O&M Cost ($/kWe)'][1] # $/kWe
+            FixedOMCostBackup = dfInputs['Fixed O&M Cost ($/kWe)'][1]
+            VariableOMCostBackup = dfInputs['Variable OM Cost ($/kWh)'][1]  # $/kWh   ######
+            VariableOMCostBackupMedian = dfInputs['Variable OM Cost ($/kWh)'][1]
+            OneTimeCostsBackup =   dfInputs['One Time Costs at beg($)'][1]  # Miscellanious costs in $     ##########
+            CapitalCostBackupMedian = dfInputs['Capital Cost ($/kWe)'][1]
+            CapitalCostBackup =dfInputs['Capital Cost ($/kWe)'][1]   #$/kWe
+            NumberOfYearsBackup= dfInputs['Plant Life (Years)'][1]
+            NumberOfYearsBackupMedian= dfInputs['Plant Life (Years)'][1]
+
+            
+            FixedOMCostBackupBest  = dfInputs['Fixed O&M Cost ($/kWe)'][0]
+            FixedOMCostBackupWorst  = dfInputs['Fixed O&M Cost ($/kWe)'][2]
+            CapitalCostBackupBest =  dfInputs['Capital Cost ($/kWe)'][0]
+            CapitalCostBackupWorst = dfInputs['Capital Cost ($/kWe)'][2] 
+            AltFuelCostBackupBest = 0
+            AltFuelCostBackupWorst = 0
+            IntermittentCostBackupBest = dfInputs['Refurbishment Cost ($)'][0]
+            IntermittentCostBackupMedian = dfInputs['Refurbishment Cost ($)'][0]
+            IntermittentCostBackupWorst = dfInputs['Refurbishment Cost ($)'][2]
+            VariableOMCostBackupBest = dfInputs['Variable OM Cost ($/kWh)'][0]
+            VariableOMCostBackupWorst = dfInputs['Fuel Cost ($/KWh)'][2]
+            HeatRateBest = dfInputs['Heat Rate (mmBTU/kWh)'][0]
+            HeatRateWorst = dfInputs['Heat Rate (mmBTU/kWh)'][2]
+            FuelCostBest = dfInputs['Fuel Cost ($/mmBTU)'][0]
+            FuelCostWorst =  dfInputs['Fuel Cost ($/mmBTU)'][2]
+            NumberOfYearsBackupBest = dfInputs['Plant Life (Years)'][0]
+            NumberOfYearsBackupWorst = dfInputs['Plant Life (Years)'][2]
+        else:
+            print("error")
+        
+        
+        if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
+           AltFuelCost = LNG
+           AltFuelCostBest = LNGBest
+           AltFuelCostWorst = LNGWorst
+        else:
+            AltFuelCost= AltFuelCost
+            AltFuelCostBest = AltFuelCostBest
+            AltFuelCostWorst = AltFuelCostWorst
+        
+        
+        if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
+            AltFuelCostBackup = LNGBackup
+            AltFuelCostBackupBest = LNGBackupBest
+            AltFuelCostBackupWorst = LNGBackupWorst
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
+            AltFuelCostBackupBest = AltFuelCostBackupBest
+            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+        
+        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
+            
+        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+        else:
+            AltFuelCostBackup = AltFuelCostBackup
+           
+        
+        DecommissionCostBackupBest=0
+        DecommissionCostBackupMedian=0
+        DecommissionCostBackupWorst = 0
+##################################################################################################
+        for DecommissionCost in [DecommissionCostBest, DecommissionCostMedian, DecommissionCostWorst ]:
+          for DecommissionCostBackup in [DecommissionCostBackupBest, DecommissionCostBackupMedian, DecommissionCostBackupWorst]:
+            UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+#############################################################################################
+            CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
+            TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
+            TotalAnnualGeneration = DaysOfPowerPerYear*24*1000*CapacityNeeded      #kWh
+            if AltFuelCost == 0:
+                AnnualFuelCost=FuelCost*HeatRate*TotalAnnualGeneration*CapacityFactor  #  $
+                AnnualFixedOMCost = FixedOMCost*CapacityNeeded*1000*CapacityFactor    #  $
+                AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration*CapacityFactor# $
+   
+            else:
+                AnnualFuelCost = AltFuelCost*TotalAnnualGeneration*CapacityFactor    #   $
+                AnnualFixedOMCost =FixedOMCost*CapacityNeeded*1000*CapacityFactor   #   $
+                AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration*CapacityFactor  #  $
+
+
+            TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
+            AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
+
+
+   # print("CapacityNeeded:" , CapacityNeeded)
+        #print("TotalCapitalCost:", TotalCapitalCost)
+   # print("TotalAnnualGeneration:", TotalAnnualGeneration)
+   # print("AnnualFuelCost:", AnnualFuelCost)
+   # print("AnnualFixedOMCost:", AnnualFixedOMCost)
+   # print("AnnualVariableOMCost", AnnualVariableOMCost)
+   # print("IntermittentCosts", IntermittentCosts)
+   
+     
+            CapacityNeededBackup = PowerGenerationBackup
+       
+            TotalCapitalCostBackup = 1000*CapacityNeededBackup*CapitalCostBackup
+            TotalAnnualGenerationBackup = DaysOfPowerPerYearBackup*24*1000*CapacityNeededBackup
+            if AltFuelCostBackup == 0:
+
+           
+   
+                AnnualFuelCostBackup=FuelCostBackup*HeatRateBackup*TotalAnnualGenerationBackup  #  $
+                AnnualFixedOMCostBackup = FixedOMCostBackup*CapacityNeededBackup*1000     #  $
+                AnnualVariableOMCostBackup = VariableOMCostBackup*TotalAnnualGenerationBackup# $
+            else:
+
+                AnnualFuelCostBackup = AltFuelCostBackup*TotalAnnualGenerationBackup    #   $
+                AnnualFixedOMCostBackup =FixedOMCostBackup*CapacityNeededBackup*1000    #   $
+                AnnualVariableOMCostBackup = VariableOMCostBackup*TotalAnnualGenerationBackup  #  $
+
+            TotalOMCostBackup = AnnualFixedOMCostBackup+AnnualVariableOMCostBackup
+       
+            if AltFuelCostBackup != 0 :
+                ReserveFuel = PowerGenerationBackup*1000*8766/365*DaysOfResilience*AltFuelCostBackup
+            else:
+                ReserveFuel=PowerGenerationBackup*1000*8766/365*DaysOfResilience*FuelCostBackup*HeatRateBackup
+   
+   
+#################################################################################################3
+########  For Fuel Escalation Index numbers, visit table Ca-5: https://nvlpubs.nist.gov/nistpubs/ir/2019/NIST.IR.85-3273-34.pdf
+            if GenerationInput ==  'Nuclear':
+            #FuelEscalation = [1,1.03,1.04,1.04,1.04,1.04,1.04,1.05,1.05,1.05,1.06,1.06,1.07,1.07,1.07,1.07,1.06,1.07,1.07,1.07,1.07,1.07,1.08,1.08,1.08,1.08]
+                FuelEscalation = FuelIndexDummy
+            elif GenerationInput == 'Diesel':
+            #FuelEscalation= [1,0.99, 0.96, 0.93, 0.91, 0.91, 0.93, 0.95, 0.97, 0.99, 1.01, 1.02, 1.03, 1.04, 1.06, 1.06,1.07, 1.09, 1.09, 1.09, 1.10, 1.11 ,1.11, 1.12, 1.12, 1.12, 1.12 ,1.11 ,1.11, 1.11, 1.11]
+                FuelEscalation = FuelIndexDummy
+            elif GenerationInput == 'NaturalGas':
+            #FuelEscalation = [1,1.01, 1.00 ,1.00, 1.02, 1.06, 1.11, 1.14, 1.14, 1.16, 1.16, 1.17, 1.17, 1.19, 1.21, 1.22,1.23, 1.25 ,1.26, 1.26, 1.27 ,1.28, 1.28, 1.29 ,1.30, 1.32, 1.34, 1.36, 1.38, 1.41, 1.44]
+                FuelEscalation = FuelIndexDummy
+            else:
+                FuelEscalation = FuelIndexDummy
+       
+            if GenerationInputBackup == 'Diesel':
+            #FuelEscalation= [1,0.99, 0.96, 0.93, 0.91, 0.91, 0.93, 0.95, 0.97, 0.99, 1.01, 1.02, 1.03, 1.04, 1.06, 1.06,1.07, 1.09, 1.09, 1.09, 1.10, 1.11 ,1.11, 1.12, 1.12, 1.12, 1.12 ,1.11 ,1.11, 1.11, 1.11]
+                FuelEscalationBackup = FuelIndexDummy
+            elif GenerationInputBackup == 'NaturalGas':
+            #FuelEscalation = [1,1.01, 1.00 ,1.00, 1.02, 1.06, 1.11, 1.14, 1.14, 1.16, 1.16, 1.17, 1.17, 1.19, 1.21, 1.22,1.23, 1.25 ,1.26, 1.26, 1.27 ,1.28, 1.28, 1.29 ,1.30, 1.32, 1.34, 1.36, 1.38, 1.41, 1.44]
+                FuelEscalationBackup = FuelIndexDummy
+            else:
+                FuelEscalationBackup = FuelIndexDummy
+       
+       
+
+            pd.set_option('display.max_columns', None)
+            pd.set_option('display.max_rows', None)
+            
+            UtilityPMT = UtilityCost
+       
+       
+            CapitalCosts = [TotalCapitalCost+OneTimeCosts]
+            OMtList = [0]
+            FuelList = [0]
+            RefurbishmentList = [0]
+            DecommissionList = [0]
+            for t in range(1,NumberOfYears+1):
+                Ft = (AnnualFuelCost*FuelEscalation[t])
+                OMt = (TotalOMCost)
+                FuelList.append(Ft)
+                OMtList.append(OMt)
+                CapitalCosts.append(0)
+            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                RefurbishmentList.append(float(IntermittentCosts))
+            else:
+                RefurbishmentList.append(0)
+            if t == NumberOfYears:
+                DecommissionList.append(AnnualDecommissionCost)
+            else:
+                DecommissionList.append(0)
+            dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
+            dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
+            dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
+            dfPrimary['CapInv.'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['CapInv.']), axis=1)
+            dfPrimary['FuelCost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['FuelCost']), axis=1)
+            dfPrimary['Refurbishment Cost'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Refurbishment Cost']), axis=1)
+            dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
+
+            
+            PrimaryNPV= np.npv(interest, dfPrimary['Total'])
+            PrimaryNPV = np.where(np.isnan(PrimaryNPV), 0, PrimaryNPV)
+            val = np.float64(PrimaryNPV)
+            PrimaryNPV = val.item()
+            
+            PrimaryPMT =np.pmt(interest,NumberOfYears, -PrimaryNPV)
+            PrimaryPMT = np.where(np.isnan(PrimaryPMT), 0, PrimaryPMT)
+            
+            #print(Scenario,GenerationInput,GenerationInputBackup)
+
+
+            CapitalCostsBackup = [TotalCapitalCostBackup+OneTimeCostsBackup]
+            ReserveFuelList = [ReserveFuel]
+            BackupOMList= [0]
+            BackupFuelCostList = [0]
+
+            for t in range(1,NumberOfYearsBackup+1):
+                FtBackup = (AnnualFuelCostBackup*FuelEscalationBackup[t])
+                OMtBackup = (TotalOMCostBackup)
+                BackupOMList.append(OMtBackup)
+                BackupFuelCostList.append(FtBackup)
+                ReserveFuelList.append(0)
+                CapitalCostsBackup.append(0)
+            dfBackup = pd.DataFrame(list(zip(years,CapitalCostsBackup, ReserveFuelList, BackupFuelCostList,BackupOMList)), columns = ['Year','CapitalCost', 'ReserveFuel', 'BackupFuel', 'BackupO&M'])
+            dfBackup['Total'] =dfBackup['CapitalCost']+dfBackup['ReserveFuel']+dfBackup['BackupFuel']+dfBackup['BackupO&M']
+            dfBackup['CapitalCost'] = dfBackup.apply(lambda x: "{0:,.2f}".format(x['CapitalCost']), axis=1)
+            dfBackup['ReserveFuel'] = dfBackup.apply(lambda x: "{0:,.2f}".format(x['ReserveFuel']), axis=1)
+            dfBackup['BackupFuel'] = dfBackup.apply(lambda x: "{0:,.2f}".format(x['BackupFuel']), axis=1)
+            dfBackup['BackupO&M'] = dfBackup.apply(lambda x: "{0:,.2f}".format(x['BackupO&M']), axis=1)
+            
+            BackupNPV= np.npv(interest, dfBackup['Total'])
+            val = np.float64(BackupNPV)
+            BackupNPV = val.item()
+            
+            BackupPMT =np.pmt(interest,NumberOfYearsBackup, -BackupNPV)
+            BackupPMT = np.where(np.isnan(BackupPMT), 0, BackupPMT)
+           
+       
+       
+       
+       
+       
+       
+
+            TotalPMT = PrimaryPMT+BackupPMT+UtilityPMT
+
+            if Scenario == 'Scenario1' and GenerationInput == 'None' and (GenerationInputBackup == 'Nuclear'):
+                ResultsListScenario1Nuclear.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+            elif Scenario == 'Scenario1' and GenerationInput == 'None' and (GenerationInputBackup == 'Diesel'):
+                ResultsListScenario1Diesel.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+            elif Scenario == 'Scenario1' and GenerationInput == 'None' and (GenerationInputBackup == 'NaturalGas'):
+                ResultsListScenario1NaturalGas.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+            
+            elif Scenario == 'Scenario2' and (GenerationInput == 'Nuclear') and GenerationInputBackup == 'None':
+                ResultsListScenario2Nuclear.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+            elif Scenario == 'Scenario2' and (GenerationInput == 'Diesel') and GenerationInputBackup == 'None':
+                ResultsListScenario2Diesel.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+            elif Scenario == 'Scenario2' and (GenerationInput =='NaturalGas') and GenerationInputBackup == 'None':
+                ResultsListScenario2NaturalGas.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+            
+            elif (Scenario == 'Scenario3') and (GenerationInput == 'Nuclear' and GenerationInputBackup == 'Diesel'):
+                ResultsListScenario3Nuclear.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+                
+            elif (Scenario == 'Scenario3') and  (GenerationInput == 'Diesel' and GenerationInputBackup == 'NaturalGas'):
+                ResultsListScenario3Diesel.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+            
+            elif (Scenario == 'Scenario3') and (GenerationInput == 'NaturalGas' and GenerationInputBackup == 'Diesel'):
+                ResultsListScenario3NaturalGas.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+            
+            elif (Scenario == 'Scenario4') and (GenerationInput == 'Nuclear' and GenerationInputBackup == 'Diesel'):
+                ResultsListScenario4Nuclear.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+                
+            elif (Scenario == 'Scenario4') and ( GenerationInput == 'Diesel' and GenerationInputBackup == 'NaturalGas'):
+                ResultsListScenario4Diesel.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+                
+            elif (Scenario == 'Scenario4') and (GenerationInput == 'NaturalGas' and GenerationInputBackup == 'Diesel'):
+                ResultsListScenario4NaturalGas.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+            else:
+                ResultsListDummy.append([Scenario, GenerationInput, GenerationInputBackup, TotalPMT, FixedOMCost, FixedOMCostBackup])
+            
+
+ dfResultsScenario1Nuclear = pd.DataFrame(ResultsListScenario1Nuclear, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario2Nuclear = pd.DataFrame(ResultsListScenario2Nuclear, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario3Nuclear = pd.DataFrame(ResultsListScenario3Nuclear, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario4Nuclear = pd.DataFrame(ResultsListScenario4Nuclear, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario1Diesel = pd.DataFrame(ResultsListScenario1Diesel, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario2Diesel = pd.DataFrame(ResultsListScenario2Diesel, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario3Diesel = pd.DataFrame(ResultsListScenario3Diesel, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario4Diesel = pd.DataFrame(ResultsListScenario4Diesel, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario1NaturalGas = pd.DataFrame(ResultsListScenario1NaturalGas, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario2NaturalGas = pd.DataFrame(ResultsListScenario2NaturalGas, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario3NaturalGas = pd.DataFrame(ResultsListScenario3NaturalGas, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario4NaturalGas = pd.DataFrame(ResultsListScenario4NaturalGas, columns = ['Scenario', 'Power Type','Backup', 'Annual Payment', 'Level1', 'Level2'])
+ dfResultsScenario1Nuclear['Sensitivity Type'] = 'Decommission cost'
+ dfResultsScenario2Nuclear['Sensitivity Type'] = 'Decommission cost'
+ dfResultsScenario3Nuclear['Sensitivity Type'] = 'Decommission cost'
+ dfResultsScenario4Nuclear['Sensitivity Type'] = 'Decommission cost'
+
+ dfResultsScenario1Diesel['Sensitivity Type'] = 'Decommission cost'
+ dfResultsScenario2Diesel['Sensitivity Type'] = 'Decommission cost'
+ dfResultsScenario3Diesel['Sensitivity Type'] = 'Decommission cost'
+ dfResultsScenario4Diesel['Sensitivity Type'] =  'Decommission cost'
+
+ dfResultsScenario1NaturalGas['Sensitivity Type'] = 'Decommission cost'
+ dfResultsScenario2NaturalGas['Sensitivity Type'] = 'Decommission cost'
+ dfResultsScenario3NaturalGas['Sensitivity Type'] = 'Decommission cost'
+ dfResultsScenario4NaturalGas['Sensitivity Type'] = 'Decommission cost'
+
+
+ dfResultsScenario1Nuclear['Interest Rate'] = interest
+ dfResultsScenario2Nuclear['Interest Rate'] = interest
+ dfResultsScenario3Nuclear['Interest Rate'] = interest
+ dfResultsScenario4Nuclear['Interest Rate'] = interest
+
+ dfResultsScenario1Diesel['Interest Rate'] = interest
+ dfResultsScenario2Diesel['Interest Rate'] = interest
+ dfResultsScenario3Diesel['Interest Rate'] = interest
+ dfResultsScenario4Diesel['Interest Rate'] = interest
+
+ dfResultsScenario1NaturalGas['Interest Rate'] = interest
+ dfResultsScenario2NaturalGas['Interest Rate'] = interest
+ dfResultsScenario3NaturalGas['Interest Rate'] = interest
+ dfResultsScenario4NaturalGas['Interest Rate'] = interest
+
+
+ dfResultsScenario1Nuclear = dfResultsScenario1Nuclear.iloc[[1,3,4,5,7],:]
+ dfResultsScenario2Nuclear = dfResultsScenario2Nuclear.iloc[[1,3,4,5,7],:]
+ dfResultsScenario3Nuclear = dfResultsScenario3Nuclear.iloc[[1,3,4,5,7],:]
+ dfResultsScenario4Nuclear = dfResultsScenario4Nuclear.iloc[[1,3,4,5,7],:]
+
+ dfResultsScenario1Diesel = dfResultsScenario1Diesel.iloc[[1,3,4,5,7],:]
+ dfResultsScenario2Diesel = dfResultsScenario2Diesel.iloc[[1,3,4,5,7],:]
+ dfResultsScenario3Diesel = dfResultsScenario3Diesel.iloc[[1,3,4,5,7],:]
+ dfResultsScenario4Diesel = dfResultsScenario4Diesel.iloc[[1,3,4,5,7],:]
+
+ dfResultsScenario1NaturalGas = dfResultsScenario1NaturalGas.iloc[[1,3,4,5,7],:]
+ dfResultsScenario2NaturalGas = dfResultsScenario2NaturalGas.iloc[[1,3,4,5,7],:]
+ dfResultsScenario3NaturalGas = dfResultsScenario3NaturalGas.iloc[[1,3,4,5,7],:]
+ dfResultsScenario4NaturalGas = dfResultsScenario4NaturalGas.iloc[[1,3,4,5,7],:]
+
+
+ NuclearNuclear1 = [dfResultsScenario1Nuclear.loc[4]['Scenario'], dfResultsScenario1Nuclear.loc[4]['Power Type'], dfResultsScenario1Nuclear.loc[4]['Backup'], dfResultsScenario1Nuclear.loc[3]['Annual Payment'], dfResultsScenario1Nuclear.loc[4]['Annual Payment'], dfResultsScenario1Nuclear.loc[5]['Annual Payment'], dfResultsScenario1Nuclear.loc[4]['Sensitivity Type'],dfResultsScenario1Nuclear.loc[4]['Interest Rate']]      
+ NuclearNuclear2 = [dfResultsScenario2Nuclear.loc[4]['Scenario'], dfResultsScenario2Nuclear.loc[4]['Power Type'], dfResultsScenario2Nuclear.loc[4]['Backup'], dfResultsScenario2Nuclear.loc[1]['Annual Payment'], dfResultsScenario2Nuclear.loc[4]['Annual Payment'], dfResultsScenario2Nuclear.loc[7]['Annual Payment'], dfResultsScenario2Nuclear.loc[4]['Sensitivity Type'], dfResultsScenario2Nuclear.loc[4]['Interest Rate']]
+ NuclearNuclear3 = [dfResultsScenario3Nuclear.loc[4]['Scenario'], dfResultsScenario3Nuclear.loc[4]['Power Type'], dfResultsScenario3Nuclear.loc[4]['Backup'], dfResultsScenario3Nuclear.loc[1]['Annual Payment'], dfResultsScenario3Nuclear.loc[4]['Annual Payment'], dfResultsScenario3Nuclear.loc[7]['Annual Payment'], dfResultsScenario3Nuclear.loc[4]['Sensitivity Type'], dfResultsScenario3Nuclear.loc[4]['Interest Rate']]
+ NuclearNuclear4 = [dfResultsScenario4Nuclear.loc[4]['Scenario'], dfResultsScenario4Nuclear.loc[4]['Power Type'], dfResultsScenario4Nuclear.loc[4]['Backup'], dfResultsScenario4Nuclear.loc[1]['Annual Payment'], dfResultsScenario4Nuclear.loc[4]['Annual Payment'], dfResultsScenario4Nuclear.loc[7]['Annual Payment'], dfResultsScenario4Nuclear.loc[4]['Sensitivity Type'],dfResultsScenario4Nuclear.loc[4]['Interest Rate']]
+ DieselDiesel1 = [dfResultsScenario1Diesel.loc[4]['Scenario'], dfResultsScenario1Diesel.loc[4]['Power Type'], dfResultsScenario1Diesel.loc[4]['Backup'], dfResultsScenario1Diesel.loc[3]['Annual Payment'], dfResultsScenario1Diesel.loc[4]['Annual Payment'], dfResultsScenario1Diesel.loc[5]['Annual Payment'], dfResultsScenario1Diesel.loc[4]['Sensitivity Type'],dfResultsScenario1Diesel.loc[4]['Interest Rate']]
+ DieselDiesel2 = [dfResultsScenario2Diesel.loc[4]['Scenario'], dfResultsScenario2Diesel.loc[4]['Power Type'], dfResultsScenario2Diesel.loc[4]['Backup'], dfResultsScenario2Diesel.loc[1]['Annual Payment'], dfResultsScenario2Diesel.loc[4]['Annual Payment'], dfResultsScenario2Diesel.loc[7]['Annual Payment'], dfResultsScenario2Diesel.loc[4]['Sensitivity Type'], dfResultsScenario2Diesel.loc[4]['Interest Rate']]
+ DieselDiesel3 = [dfResultsScenario3Diesel.loc[4]['Scenario'], dfResultsScenario3Diesel.loc[4]['Power Type'], dfResultsScenario3Diesel.loc[4]['Backup'], dfResultsScenario3Diesel.loc[1]['Annual Payment'], dfResultsScenario3Diesel.loc[4]['Annual Payment'], dfResultsScenario3Diesel.loc[7]['Annual Payment'], dfResultsScenario3Diesel.loc[4]['Sensitivity Type'], dfResultsScenario3Diesel.loc[4]['Interest Rate']]
+ DieselDiesel4 = [dfResultsScenario4Diesel.loc[4]['Scenario'], dfResultsScenario4Diesel.loc[4]['Power Type'], dfResultsScenario4Diesel.loc[4]['Backup'], dfResultsScenario4Diesel.loc[1]['Annual Payment'], dfResultsScenario4Diesel.loc[4]['Annual Payment'], dfResultsScenario4Diesel.loc[7]['Annual Payment'], dfResultsScenario4Diesel.loc[4]['Sensitivity Type'], dfResultsScenario4Diesel.loc[4]['Interest Rate']]
+ NaturalGasNaturalGas1 = [dfResultsScenario1NaturalGas.loc[4]['Scenario'], dfResultsScenario1NaturalGas.loc[4]['Power Type'], dfResultsScenario1NaturalGas.loc[4]['Backup'], dfResultsScenario1NaturalGas.loc[3]['Annual Payment'], dfResultsScenario1NaturalGas.loc[4]['Annual Payment'], dfResultsScenario1NaturalGas.loc[5]['Annual Payment'], dfResultsScenario1NaturalGas.loc[4]['Sensitivity Type'], dfResultsScenario1NaturalGas.loc[4]['Interest Rate']]
+ NaturalGasNaturalGas2 = [dfResultsScenario2NaturalGas.loc[4]['Scenario'], dfResultsScenario2NaturalGas.loc[4]['Power Type'], dfResultsScenario2NaturalGas.loc[4]['Backup'], dfResultsScenario2NaturalGas.loc[1]['Annual Payment'], dfResultsScenario2NaturalGas.loc[4]['Annual Payment'], dfResultsScenario2NaturalGas.loc[7]['Annual Payment'], dfResultsScenario2NaturalGas.loc[4]['Sensitivity Type'], dfResultsScenario2NaturalGas.loc[4]['Interest Rate']]
+ NaturalGasNaturalGas3 = [dfResultsScenario3NaturalGas.loc[4]['Scenario'], dfResultsScenario3NaturalGas.loc[4]['Power Type'], dfResultsScenario3NaturalGas.loc[4]['Backup'], dfResultsScenario3NaturalGas.loc[1]['Annual Payment'], dfResultsScenario3NaturalGas.loc[4]['Annual Payment'], dfResultsScenario3NaturalGas.loc[7]['Annual Payment'], dfResultsScenario3NaturalGas.loc[4]['Sensitivity Type'], dfResultsScenario3NaturalGas.loc[4]['Interest Rate']]
+ NaturalGasNaturalGas4 = [dfResultsScenario4NaturalGas.loc[4]['Scenario'], dfResultsScenario4NaturalGas.loc[4]['Power Type'], dfResultsScenario4NaturalGas.loc[4]['Backup'], dfResultsScenario4NaturalGas.loc[1]['Annual Payment'], dfResultsScenario4NaturalGas.loc[4]['Annual Payment'], dfResultsScenario4NaturalGas.loc[7]['Annual Payment'], dfResultsScenario4NaturalGas.loc[4]['Sensitivity Type'], dfResultsScenario4NaturalGas.loc[4]['Interest Rate']]
+ NuclearDiesel3 = [dfResultsScenario3Nuclear.loc[4]['Scenario'], dfResultsScenario3Nuclear.loc[4]['Power Type'], dfResultsScenario3Nuclear.loc[4]['Backup'], dfResultsScenario3Nuclear.loc[3]['Annual Payment'], dfResultsScenario3Nuclear.loc[4]['Annual Payment'], dfResultsScenario3Nuclear.loc[5]['Annual Payment'], dfResultsScenario3Nuclear.loc[4]['Sensitivity Type'], dfResultsScenario3Nuclear.loc[4]['Interest Rate']]
+ NaturalGasDiesel3 = [dfResultsScenario3NaturalGas.loc[4]['Scenario'], dfResultsScenario3NaturalGas.loc[4]['Power Type'], dfResultsScenario3NaturalGas.loc[4]['Backup'], dfResultsScenario3NaturalGas.loc[3]['Annual Payment'], dfResultsScenario3NaturalGas.loc[4]['Annual Payment'], dfResultsScenario3NaturalGas.loc[5]['Annual Payment'], dfResultsScenario3NaturalGas.loc[4]['Sensitivity Type'], dfResultsScenario3NaturalGas.loc[4]['Interest Rate']]
+ NuclearDiesel4 = [dfResultsScenario4Nuclear.loc[4]['Scenario'], dfResultsScenario4Nuclear.loc[4]['Power Type'], dfResultsScenario4Nuclear.loc[4]['Backup'], dfResultsScenario4Nuclear.loc[3]['Annual Payment'], dfResultsScenario4Nuclear.loc[4]['Annual Payment'], dfResultsScenario4Nuclear.loc[5]['Annual Payment'], dfResultsScenario4Nuclear.loc[4]['Sensitivity Type'], dfResultsScenario4Nuclear.loc[4]['Interest Rate']]
+ NaturalGasDiesel4 = [dfResultsScenario4NaturalGas.loc[4]['Scenario'], dfResultsScenario4NaturalGas.loc[4]['Power Type'], dfResultsScenario4NaturalGas.loc[4]['Backup'], dfResultsScenario4NaturalGas.loc[3]['Annual Payment'], dfResultsScenario4NaturalGas.loc[4]['Annual Payment'], dfResultsScenario4NaturalGas.loc[5]['Annual Payment'], dfResultsScenario4NaturalGas.loc[4]['Sensitivity Type'], dfResultsScenario4NaturalGas.loc[4]['Interest Rate']]
+ DieselNaturalGas3 = [dfResultsScenario3Diesel.loc[4]['Scenario'], dfResultsScenario3Diesel.loc[4]['Power Type'], dfResultsScenario3Diesel.loc[4]['Backup'], dfResultsScenario3Diesel.loc[3]['Annual Payment'], dfResultsScenario3Diesel.loc[4]['Annual Payment'], dfResultsScenario3Diesel.loc[5]['Annual Payment'], dfResultsScenario3Diesel.loc[4]['Sensitivity Type'], dfResultsScenario3Diesel.loc[4]['Interest Rate']]
+ DieselNaturalGas4 = [dfResultsScenario4Diesel.loc[4]['Scenario'], dfResultsScenario4Diesel.loc[4]['Power Type'], dfResultsScenario4Diesel.loc[4]['Backup'], dfResultsScenario4Diesel.loc[3]['Annual Payment'], dfResultsScenario4Diesel.loc[4]['Annual Payment'], dfResultsScenario4Diesel.loc[5]['Annual Payment'], dfResultsScenario4Diesel.loc[4]['Sensitivity Type'], dfResultsScenario4Diesel.loc[4]['Interest Rate']]
+
+
+ ExcelNuclearNuclear1.loc[len(ExcelNuclearNuclear1)] = NuclearNuclear1
+ ExcelNuclearNuclear2.loc[len(ExcelNuclearNuclear2)] = NuclearNuclear2
+ ExcelNuclearNuclear3.loc[len(ExcelNuclearNuclear3)] = NuclearNuclear3
+ ExcelNuclearNuclear4.loc[len(ExcelNuclearNuclear4)] = NuclearNuclear4
+
+
+ ExcelDieselDiesel1.loc[len(ExcelDieselDiesel1)] = DieselDiesel1
+ ExcelDieselDiesel2.loc[len(ExcelDieselDiesel2)] = DieselDiesel2
+ ExcelDieselDiesel3.loc[len(ExcelDieselDiesel3)] = DieselDiesel3
+ ExcelDieselDiesel4.loc[len(ExcelDieselDiesel4)] = DieselDiesel4
+
+ ExcelNaturalGasNaturalGas1.loc[len(ExcelNaturalGasNaturalGas1)] = NaturalGasNaturalGas1
+ ExcelNaturalGasNaturalGas2.loc[len(ExcelNaturalGasNaturalGas2)] = NaturalGasNaturalGas2
+ ExcelNaturalGasNaturalGas3.loc[len(ExcelNaturalGasNaturalGas3)] = NaturalGasNaturalGas3
+ ExcelNaturalGasNaturalGas4.loc[len(ExcelNaturalGasNaturalGas4)] = NaturalGasNaturalGas4
+
+
+
+ ExcelNuclearDiesel3.loc[len(ExcelNuclearDiesel3)] = NuclearDiesel3
+ ExcelNaturalGasDiesel3.loc[len(ExcelNaturalGasDiesel3)] = NaturalGasDiesel3
+ ExcelNuclearDiesel4.loc[len(ExcelNuclearDiesel4)] = NuclearDiesel4
+ ExcelNaturalGasDiesel4.loc[len(ExcelNaturalGasDiesel4)] = NaturalGasDiesel4
+ ExcelDieselNaturalGas3.loc[len(ExcelDieselNaturalGas3)] = DieselNaturalGas3
+ ExcelDieselNaturalGas4.loc[len(ExcelDieselNaturalGas4)] = DieselNaturalGas4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
