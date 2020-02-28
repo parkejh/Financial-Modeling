@@ -219,8 +219,12 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario4']:
 ###################################################################################################
 ###################################################################################################
         UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+        if Scenario == 'Scenario2':
+            UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+            UtilityCost = UtilityCost+UtilityCostBackup
+        else:
+            UtilityCost = UtilityCost
 #############################################################################################       
-        
         CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
         TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
         TotalAnnualGeneration = DaysOfPowerPerYear*24*1000*CapacityNeeded      #kWh
@@ -318,14 +322,11 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario4']:
             FuelList.append(Ft)
             OMtList.append(OMt)
             CapitalCosts.append(0)
+            DecommissionList.append(AnnualDecommissionCost)
             if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
                 RefurbishmentList.append(float(IntermittentCosts))
             else:
                 RefurbishmentList.append(0)
-            if t == NumberOfYears:
-                DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
         dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
         dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
         dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
@@ -335,6 +336,7 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario4']:
         dfPrimary['Decommission'] = dfPrimary.apply(lambda x: "{0:,.2f}".format(x['Decommission']), axis=1)
 
         print('dfPrimary',Scenario, GenerationInput, GenerationInputBackup)
+        print(dfPrimary)
         PrimaryNPV= np.npv(interest, dfPrimary['Total'])
         PrimaryNPV = np.where(np.isnan(PrimaryNPV), 0, PrimaryNPV)
         val = np.float64(PrimaryNPV)
@@ -401,4 +403,6 @@ dfResults=dfResults.iloc[[0,1,2,23,27,31,37,42,45,53,58,61], :]
 
 dfResults['Description']=dfResults['Power Type']+' '+ dfResults['Backup']
 dfResults = dfResults[['Scenario','Description','Annual Payment']]
+print(dfInputs)
+print(dfAssumptions)
 print(dfResults)
