@@ -80,12 +80,7 @@ for interest in CostOfCapitalList:
             print("error")
 
         LNG = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGWorst = dfInputs['LNG cost ($/KWh)'][8]
-        
         LNGBackup = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBackupBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGBackupWorst = dfInputs['LNG cost ($/KWh)'][8]
             
 
         if GenerationInput == 'Nuclear':
@@ -386,31 +381,23 @@ for interest in CostOfCapitalList:
         
         
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-           AltFuelCost = LNG
-           AltFuelCostBest = LNGBest
-           AltFuelCostWorst = LNGWorst
+                AltFuelCost = LNG
+           
         else:
-            AltFuelCost= AltFuelCost
-            AltFuelCostBest = AltFuelCostBest
-            AltFuelCostWorst = AltFuelCostWorst
-        
-        
+                AltFuelCost= AltFuelCost
+                
         if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = LNGBackup
-            AltFuelCostBackupBest = LNGBackupBest
-            AltFuelCostBackupWorst = LNGBackupWorst
+                AltFuelCostBackup = LNGBackup
         else:
-            AltFuelCostBackup = AltFuelCostBackup
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                AltFuelCostBackup = AltFuelCostBackup
         
         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
            
@@ -419,6 +406,11 @@ for interest in CostOfCapitalList:
         for FixedOMCost in [FixedOMCostBest, FixedOMCostMedian, FixedOMCostWorst ]:
           for FixedOMCostBackup in [FixedOMCostBackupBest, FixedOMCostBackupMedian, FixedOMCostBackupWorst]:
             UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+            if Scenario == 'Scenario2':
+                UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+                UtilityCost = UtilityCost+UtilityCostBackup
+            else:
+                UtilityCost = UtilityCost
 #############################################################################################
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
@@ -513,14 +505,11 @@ for interest in CostOfCapitalList:
                 FuelList.append(Ft)
                 OMtList.append(OMt)
                 CapitalCosts.append(0)
-            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
-                RefurbishmentList.append(float(IntermittentCosts))
-            else:
-                RefurbishmentList.append(0)
-            if t == NumberOfYears:
                 DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
+                if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                    RefurbishmentList.append(float(IntermittentCosts))
+                else:
+                    RefurbishmentList.append(0)
             dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
             dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
@@ -793,12 +782,8 @@ for interest in CostOfCapitalList:
             print("error")
 
         LNG = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGWorst = dfInputs['LNG cost ($/KWh)'][8]
         
         LNGBackup = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBackupBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGBackupWorst = dfInputs['LNG cost ($/KWh)'][8]
             
 
         if GenerationInput == 'Nuclear':
@@ -1087,31 +1072,23 @@ for interest in CostOfCapitalList:
         
         
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-           AltFuelCost = LNG
-           AltFuelCostBest = LNGBest
-           AltFuelCostWorst = LNGWorst
+                AltFuelCost = LNG
+           
         else:
-            AltFuelCost= AltFuelCost
-            AltFuelCostBest = AltFuelCostBest
-            AltFuelCostWorst = AltFuelCostWorst
-        
-        
+                AltFuelCost= AltFuelCost
+                
         if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = LNGBackup
-            AltFuelCostBackupBest = LNGBackupBest
-            AltFuelCostBackupWorst = LNGBackupWorst
+                AltFuelCostBackup = LNGBackup
         else:
-            AltFuelCostBackup = AltFuelCostBackup
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                AltFuelCostBackup = AltFuelCostBackup
             
         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup          
         
@@ -1119,6 +1096,11 @@ for interest in CostOfCapitalList:
         for CapitalCost in [CapitalCostBest, CapitalCostMedian, CapitalCostWorst ]:
           for CapitalCostBackup in [CapitalCostBackupBest, CapitalCostBackupMedian, CapitalCostBackupWorst]:
             UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+            if Scenario == 'Scenario2':
+                UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+                UtilityCost = UtilityCost+UtilityCostBackup
+            else:
+                UtilityCost = UtilityCost
 #############################################################################################
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
@@ -1214,14 +1196,11 @@ for interest in CostOfCapitalList:
                 FuelList.append(Ft)
                 OMtList.append(OMt)
                 CapitalCosts.append(0)
-            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
-                RefurbishmentList.append(float(IntermittentCosts))
-            else:
-                RefurbishmentList.append(0)
-            if t == NumberOfYears:
                 DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
+                if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                    RefurbishmentList.append(float(IntermittentCosts))
+                else:
+                    RefurbishmentList.append(0)
             dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
             dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
@@ -1501,12 +1480,8 @@ for interest in CostOfCapitalList:
             print("error")
 
         LNG = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGWorst = dfInputs['LNG cost ($/KWh)'][8]
         
         LNGBackup = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBackupBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGBackupWorst = dfInputs['LNG cost ($/KWh)'][8]
             
 
         if GenerationInput == 'Nuclear':
@@ -1799,31 +1774,23 @@ for interest in CostOfCapitalList:
         
         
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-           AltFuelCost = LNG
-           AltFuelCostBest = LNGBest
-           AltFuelCostWorst = LNGWorst
+                AltFuelCost = LNG
+           
         else:
-            AltFuelCost= AltFuelCost
-            AltFuelCostBest = AltFuelCostBest
-            AltFuelCostWorst = AltFuelCostWorst
-        
-        
+                AltFuelCost= AltFuelCost
+                
         if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = LNGBackup
-            AltFuelCostBackupBest = LNGBackupBest
-            AltFuelCostBackupWorst = LNGBackupWorst
+                AltFuelCostBackup = LNGBackup
         else:
-            AltFuelCostBackup = AltFuelCostBackup
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                AltFuelCostBackup = AltFuelCostBackup
         
         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
            
@@ -1834,6 +1801,11 @@ for interest in CostOfCapitalList:
         for CapacityFactor in [CapacityFactorBest, CapacityFactorMedian, CapacityFactorWorst ]:
           for CapacityFactorBackup in [CapacityFactorBackupBest, CapacityFactorBackupMedian, CapacityFactorBackupWorst]:
             UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+            if Scenario == 'Scenario2':
+                UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+                UtilityCost = UtilityCost+UtilityCostBackup
+            else:
+                UtilityCost = UtilityCost
 #############################################################################################
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
@@ -1930,14 +1902,11 @@ for interest in CostOfCapitalList:
                 FuelList.append(Ft)
                 OMtList.append(OMt)
                 CapitalCosts.append(0)
-            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
-                RefurbishmentList.append(float(IntermittentCosts))
-            else:
-                RefurbishmentList.append(0)
-            if t == NumberOfYears:
                 DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
+                if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                    RefurbishmentList.append(float(IntermittentCosts))
+                else:
+                    RefurbishmentList.append(0)
             dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
             dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
@@ -2235,12 +2204,8 @@ for interest in CostOfCapitalList:
             print("error")
 
         LNG = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGWorst = dfInputs['LNG cost ($/KWh)'][8]
         
         LNGBackup = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBackupBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGBackupWorst = dfInputs['LNG cost ($/KWh)'][8]
             
 
         if GenerationInput == 'Nuclear':
@@ -2508,7 +2473,7 @@ for interest in CostOfCapitalList:
             FuelCostBackupBest = dfInputs['Fuel Cost ($/mmBTU)'][3]
             FuelCostBackupWorst = dfInputs['Fuel Cost ($/mmBTU)'][5]
             NumberOfYearsBackupBest = dfInputs['Plant Life (Years)'][3]
-            NumberOfYearsBakupWorst = dfInputs['Plant Life (Years)'][5]
+            NumberOfYearsBackupWorst = dfInputs['Plant Life (Years)'][5]
         elif GenerationInputBackup == 'Nuclear':
             FuelCostBackup =  dfInputs['Fuel Cost ($/mmBTU)'][1]   #  $/mmBTU #######
             HeatRateBackup =  dfInputs['Heat Rate (mmBTU/kWh)'][1] #  mmBTU/kWh   #######
@@ -2544,31 +2509,23 @@ for interest in CostOfCapitalList:
         
         
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-           AltFuelCost = LNG
-           AltFuelCostBest = LNGBest
-           AltFuelCostWorst = LNGWorst
+                AltFuelCost = LNG
+           
         else:
-            AltFuelCost= AltFuelCost
-            AltFuelCostBest = AltFuelCostBest
-            AltFuelCostWorst = AltFuelCostWorst
-        
-        
+                AltFuelCost= AltFuelCost
+                
         if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = LNGBackup
-            AltFuelCostBackupBest = LNGBackupBest
-            AltFuelCostBackupWorst = LNGBackupWorst
+                AltFuelCostBackup = LNGBackup
         else:
-            AltFuelCostBackup = AltFuelCostBackup
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                AltFuelCostBackup = AltFuelCostBackup
         
         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
 
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
            
@@ -2577,6 +2534,11 @@ for interest in CostOfCapitalList:
         for NumberOfYears in [NumberOfYearsBest, NumberOfYearsMedian, NumberOfYearsWorst ]:
           for NumberOfYearsBackup in [NumberOfYearsBackupBest, NumberOfYearsBackupMedian, NumberOfYearsBackupWorst]:
             UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+            if Scenario == 'Scenario2':
+                UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+                UtilityCost = UtilityCost+UtilityCostBackup
+            else:
+                UtilityCost = UtilityCost
 #############################################################################################
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
@@ -2673,14 +2635,11 @@ for interest in CostOfCapitalList:
                 FuelList.append(Ft)
                 OMtList.append(OMt)
                 CapitalCosts.append(0)
-            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
-                RefurbishmentList.append(float(IntermittentCosts))
-            else:
-                RefurbishmentList.append(0)
-            if t == NumberOfYears:
                 DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
+                if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                    RefurbishmentList.append(float(IntermittentCosts))
+                else:
+                    RefurbishmentList.append(0)
             dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
             dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
@@ -3008,12 +2967,8 @@ for interest in CostOfCapitalList:
             print("error")
 
         LNG = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGWorst = dfInputs['LNG cost ($/KWh)'][8]
         
         LNGBackup = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBackupBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGBackupWorst = dfInputs['LNG cost ($/KWh)'][8]
             
 
         if GenerationInput == 'Nuclear':
@@ -3321,31 +3276,23 @@ for interest in CostOfCapitalList:
         
         
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-           AltFuelCost = LNG
-           AltFuelCostBest = LNGBest
-           AltFuelCostWorst = LNGWorst
+                AltFuelCost = LNG
+           
         else:
-            AltFuelCost= AltFuelCost
-            AltFuelCostBest = AltFuelCostBest
-            AltFuelCostWorst = AltFuelCostWorst
-        
-        
+                AltFuelCost= AltFuelCost
+                
         if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = LNGBackup
-            AltFuelCostBackupBest = LNGBackupBest
-            AltFuelCostBackupWorst = LNGBackupWorst
+                AltFuelCostBackup = LNGBackup
         else:
-            AltFuelCostBackup = AltFuelCostBackup
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                AltFuelCostBackup = AltFuelCostBackup
         
         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
            
@@ -3354,6 +3301,11 @@ for interest in CostOfCapitalList:
         for CoreLife in [CoreLifeBest, CoreLifeMedian, CoreLifeWorst ]:
           for CoreLifeBackup in [0, 0, 0]:
             UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+            if Scenario == 'Scenario2':
+                UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+                UtilityCost = UtilityCost+UtilityCostBackup
+            else:
+                UtilityCost = UtilityCost
 #############################################################################################
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
@@ -3448,14 +3400,11 @@ for interest in CostOfCapitalList:
                 FuelList.append(Ft)
                 OMtList.append(OMt)
                 CapitalCosts.append(0)
-            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
-                RefurbishmentList.append(float(IntermittentCosts))
-            else:
-                RefurbishmentList.append(0)
-            if t == NumberOfYears:
                 DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
+                if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                    RefurbishmentList.append(float(IntermittentCosts))
+                else:
+                    RefurbishmentList.append(0)
             dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
             dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
@@ -3757,12 +3706,8 @@ for interest in CostOfCapitalList:
             print("error")
 
         LNG = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGWorst = dfInputs['LNG cost ($/KWh)'][8]
         
         LNGBackup = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBackupBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGBackupWorst = dfInputs['LNG cost ($/KWh)'][8]
             
 
         if GenerationInput == 'Nuclear':
@@ -4076,31 +4021,23 @@ for interest in CostOfCapitalList:
         
         
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-           AltFuelCost = LNG
-           AltFuelCostBest = LNGBest
-           AltFuelCostWorst = LNGWorst
+                AltFuelCost = LNG
+           
         else:
-            AltFuelCost= AltFuelCost
-            AltFuelCostBest = AltFuelCostBest
-            AltFuelCostWorst = AltFuelCostWorst
-        
-        
+                AltFuelCost= AltFuelCost
+                
         if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = LNGBackup
-            AltFuelCostBackupBest = LNGBackupBest
-            AltFuelCostBackupWorst = LNGBackupWorst
+                AltFuelCostBackup = LNGBackup
         else:
-            AltFuelCostBackup = AltFuelCostBackup
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                AltFuelCostBackup = AltFuelCostBackup
         
         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
            
@@ -4109,6 +4046,11 @@ for interest in CostOfCapitalList:
         for IntermittentCosts in [IntermittentCostBest, IntermittentCostMedian, IntermittentCostWorst ]:
           for IntermittentCostBackup in [IntermittentCostBackupBest, IntermittentCostBackupMedian, IntermittentCostBackupWorst]:
             UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+            if Scenario == 'Scenario2':
+                UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+                UtilityCost = UtilityCost+UtilityCostBackup
+            else:
+                UtilityCost = UtilityCost
 #############################################################################################
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
@@ -4203,14 +4145,11 @@ for interest in CostOfCapitalList:
                 FuelList.append(Ft)
                 OMtList.append(OMt)
                 CapitalCosts.append(0)
-            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
-                RefurbishmentList.append(float(IntermittentCosts))
-            else:
-                RefurbishmentList.append(0)
-            if t == NumberOfYears:
                 DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
+                if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                    RefurbishmentList.append(float(IntermittentCosts))
+                else:
+                    RefurbishmentList.append(0)
             dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
             dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
@@ -4501,12 +4440,8 @@ for interest in CostOfCapitalList:
             print("error")
 
         LNG = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGWorst = dfInputs['LNG cost ($/KWh)'][8]
         
         LNGBackup = dfInputs['LNG cost ($/KWh)'][7]
-        LNGBackupBest = dfInputs['LNG cost ($/KWh)'][6]
-        LNGBackupWorst = dfInputs['LNG cost ($/KWh)'][8]
             
 
         if GenerationInput == 'Nuclear':
@@ -4829,31 +4764,23 @@ for interest in CostOfCapitalList:
         
         
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-           AltFuelCost = LNG
-           AltFuelCostBest = LNGBest
-           AltFuelCostWorst = LNGWorst
+                AltFuelCost = LNG
+           
         else:
-            AltFuelCost= AltFuelCost
-            AltFuelCostBest = AltFuelCostBest
-            AltFuelCostWorst = AltFuelCostWorst
-        
-        
+                AltFuelCost= AltFuelCost
+                
         if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = LNGBackup
-            AltFuelCostBackupBest = LNGBackupBest
-            AltFuelCostBackupWorst = LNGBackupWorst
+                AltFuelCostBackup = LNGBackup
         else:
-            AltFuelCostBackup = AltFuelCostBackup
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                AltFuelCostBackup = AltFuelCostBackup
         
         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
            
@@ -4862,6 +4789,11 @@ for interest in CostOfCapitalList:
         for VariableOMCost in [VariableOMCostBest, VariableOMCostMedian, VariableOMCostWorst ]:
           for VariableOMCostBackup in [VariableOMCostBackupBest, VariableOMCostBackupMedian, VariableOMCostBackupWorst]:
             UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+            if Scenario == 'Scenario2':
+                UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+                UtilityCost = UtilityCost+UtilityCostBackup
+            else:
+                UtilityCost = UtilityCost
 #############################################################################################
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
@@ -4958,14 +4890,11 @@ for interest in CostOfCapitalList:
                 FuelList.append(Ft)
                 OMtList.append(OMt)
                 CapitalCosts.append(0)
-            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
-                RefurbishmentList.append(float(IntermittentCosts))
-            else:
-                RefurbishmentList.append(0)
-            if t == NumberOfYears:
                 DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
+                if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                    RefurbishmentList.append(float(IntermittentCosts))
+                else:
+                    RefurbishmentList.append(0)
             dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
             dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
@@ -5591,39 +5520,52 @@ for interest in CostOfCapitalList:
            
     
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-           AltFuelCostMedian = LNGMedian
-           AltFuelCostBest = LNGMedian
-           AltFuelCostWorst = LNGMedian
+                AltFuelCostMedian = LNGMedian
+                AltFuelCostBest = LNGBest
+                AltFuelCostWorst = LNGWorst
            
-           
-           AltFuelCostBackupMedian = LNGBackupMedian
-           AltFuelCostBackupBest = LNGBackupMedian
-           AltFuelCostBackupWorst = LNGBackupMedian
         else:
-            AltFuelCost= AltFuelCost
-            AltFuelCostBest = AltFuelCostBest
-            AltFuelCostWorst = AltFuelCostWorst
-            
-            
-            AltFuelCostBackup = AltFuelCostBackup
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                AltFuelCostMedian= AltFuelCostMedian
+                AltFuelCostBest = AltFuelCostBest
+                AltFuelCostWorst = AltFuelCostWorst
+                
+        if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
+                AltFuelCostBackupMedian = LNGBackupMedian
+                AltFuelCostBackupBest = LNGBackupBest
+                AltFuelCostBackupWorst = LNGBackupWorst
+        else:
+                AltFuelCostBackupMedian = AltFuelCostBackupMedian
+                AltFuelCostBackupBest = AltFuelCostBackupBest
+                AltFuelCostBackupWorst = AltFuelCostBackupWorst
         
         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackupMedian = LNGBackupMedian
+            AltFuelCostBackupBest = LNGBackupBest
+            AltFuelCostBackupWorst = LNGBackupWorst
         else:
-            AltFuelCostBackup = AltFuelCostBackup
+            AltFuelCostBackupMedian = AltFuelCostBackupMedian
+            AltFuelCostBackupBest = AltFuelCostBackupBest
+            AltFuelCostBackupWorst = AltFuelCostBackupWorst
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackupMedian = LNGBackupMedian
+            AltFuelCostBackupBest = LNGBackupBest
+            AltFuelCostBackupWorst = LNGBackupWorst
         else:
-            AltFuelCostBackup = AltFuelCostBackup
+            AltFuelCostBackupMedian = AltFuelCostBackupMedian
+            AltFuelCostBackupBest = AltFuelCostBackupBest
+            AltFuelCostBackupWorst = AltFuelCostBackupWorst
         
         
 ##################################################################################################
         for AltFuelCost in [AltFuelCostBest, AltFuelCostMedian, AltFuelCostWorst ]:
           for AltFuelCostBackup in [AltFuelCostBackupBest, AltFuelCostBackupMedian, AltFuelCostBackupWorst]:
             UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+            if Scenario == 'Scenario2':
+                UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+                UtilityCost = UtilityCost+UtilityCostBackup
+            else:
+                UtilityCost = UtilityCost
 #############################################################################################
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
@@ -5720,14 +5662,11 @@ for interest in CostOfCapitalList:
                 FuelList.append(Ft)
                 OMtList.append(OMt)
                 CapitalCosts.append(0)
-            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
-                RefurbishmentList.append(float(IntermittentCosts))
-            else:
-                RefurbishmentList.append(0)
-            if t == NumberOfYears:
                 DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
+                if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                    RefurbishmentList.append(float(IntermittentCosts))
+                else:
+                    RefurbishmentList.append(0)
             dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
             dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
@@ -6358,31 +6297,31 @@ for interest in CostOfCapitalList:
         
         
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-           AltFuelCost = LNG
-           AltFuelCostBest = LNGBest
-           AltFuelCostWorst = LNGWorst
+                AltFuelCostMedian = LNGMedian
+                AltFuelCostBest = LNGBest
+                AltFuelCostWorst = LNGWorst
+           
         else:
-            AltFuelCost= AltFuelCost
-            AltFuelCostBest = AltFuelCostBest
-            AltFuelCostWorst = AltFuelCostWorst
-        
-        
+                AltFuelCostMedian= AltFuelCostMedian
+                AltFuelCostBest = AltFuelCostBest
+                AltFuelCostWorst = AltFuelCostWorst
+                
         if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = LNGBackup
-            AltFuelCostBackupBest = LNGBackupBest
-            AltFuelCostBackupWorst = LNGBackupWorst
+                AltFuelCostBackupMedian = LNGBackupMedian
+                AltFuelCostBackupBest = LNGBackupBest
+                AltFuelCostBackupWorst = LNGBackupWorst
         else:
-            AltFuelCostBackup = AltFuelCostBackup
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                AltFuelCostBackupMedian = AltFuelCostBackupMedian
+                AltFuelCostBackupBest = AltFuelCostBackupBest
+                AltFuelCostBackupWorst = AltFuelCostBackupWorst
         
         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
            
@@ -6391,6 +6330,11 @@ for interest in CostOfCapitalList:
         for HeatRate in [HeatRateBest, HeatRateMedian, HeatRateWorst ]:
           for HeatRateBackup in [HeatRateBackupBest, HeatRateBackupMedian, HeatRateBackupWorst]:
             UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+            if Scenario == 'Scenario2':
+                UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+                UtilityCost = UtilityCost+UtilityCostBackup
+            else:
+                UtilityCost = UtilityCost
 #############################################################################################
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
@@ -6485,14 +6429,11 @@ for interest in CostOfCapitalList:
                 FuelList.append(Ft)
                 OMtList.append(OMt)
                 CapitalCosts.append(0)
-            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
-                RefurbishmentList.append(float(IntermittentCosts))
-            else:
-                RefurbishmentList.append(0)
-            if t == NumberOfYears:
                 DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
+                if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                    RefurbishmentList.append(float(IntermittentCosts))
+                else:
+                    RefurbishmentList.append(0)
             dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
             dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
@@ -7147,31 +7088,31 @@ for interest in CostOfCapitalList:
         
         
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-           AltFuelCost = LNG
-           AltFuelCostBest = LNGBest
-           AltFuelCostWorst = LNGWorst
+                AltFuelCostMedian = LNGMedian
+                AltFuelCostBest = LNGBest
+                AltFuelCostWorst = LNGWorst
+           
         else:
-            AltFuelCost= AltFuelCost
-            AltFuelCostBest = AltFuelCostBest
-            AltFuelCostWorst = AltFuelCostWorst
-        
-        
+                AltFuelCostMedian= AltFuelCostMedian
+                AltFuelCostBest = AltFuelCostBest
+                AltFuelCostWorst = AltFuelCostWorst
+                
         if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = LNGBackup
-            AltFuelCostBackupBest = LNGBackupBest
-            AltFuelCostBackupWorst = LNGBackupWorst
+                AltFuelCostBackupMedian = LNGBackupMedian
+                AltFuelCostBackupBest = LNGBackupBest
+                AltFuelCostBackupWorst = LNGBackupWorst
         else:
-            AltFuelCostBackup = AltFuelCostBackup
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                AltFuelCostBackupMedian = AltFuelCostBackupMedian
+                AltFuelCostBackupBest = AltFuelCostBackupBest
+                AltFuelCostBackupWorst = AltFuelCostBackupWorst
         
         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
            
@@ -7180,6 +7121,11 @@ for interest in CostOfCapitalList:
         for FuelCost in [FuelCostBest, FuelCostMedian, FuelCostWorst ]:
           for FuelCostBackup in [FuelCostBackupBest, FuelCostBackupMedian, FuelCostBackupWorst]:
             UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+            if Scenario == 'Scenario2':
+                UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+                UtilityCost = UtilityCost+UtilityCostBackup
+            else:
+                UtilityCost = UtilityCost
 #############################################################################################
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
@@ -7275,14 +7221,11 @@ for interest in CostOfCapitalList:
                 FuelList.append(Ft)
                 OMtList.append(OMt)
                 CapitalCosts.append(0)
-            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
-                RefurbishmentList.append(float(IntermittentCosts))
-            else:
-                RefurbishmentList.append(0)
-            if t == NumberOfYears:
                 DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
+                if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                    RefurbishmentList.append(float(IntermittentCosts))
+                else:
+                    RefurbishmentList.append(0)
             dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
             dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
@@ -7918,31 +7861,31 @@ for interest in CostOfCapitalList:
         
         
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-           AltFuelCost = LNG
-           AltFuelCostBest = LNGBest
-           AltFuelCostWorst = LNGWorst
+                AltFuelCostMedian = LNGMedian
+                AltFuelCostBest = LNGBest
+                AltFuelCostWorst = LNGWorst
+           
         else:
-            AltFuelCost= AltFuelCost
-            AltFuelCostBest = AltFuelCostBest
-            AltFuelCostWorst = AltFuelCostWorst
-        
-        
+                AltFuelCostMedian= AltFuelCostMedian
+                AltFuelCostBest = AltFuelCostBest
+                AltFuelCostWorst = AltFuelCostWorst
+                
         if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = LNGBackup
-            AltFuelCostBackupBest = LNGBackupBest
-            AltFuelCostBackupWorst = LNGBackupWorst
+                AltFuelCostBackupMedian = LNGBackupMedian
+                AltFuelCostBackupBest = LNGBackupBest
+                AltFuelCostBackupWorst = LNGBackupWorst
         else:
-            AltFuelCostBackup = AltFuelCostBackup
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                AltFuelCostBackupMedian = AltFuelCostBackupMedian
+                AltFuelCostBackupBest = AltFuelCostBackupBest
+                AltFuelCostBackupWorst = AltFuelCostBackupWorst
         
         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
         else:
             AltFuelCostBackup = AltFuelCostBackup
            
@@ -7954,6 +7897,11 @@ for interest in CostOfCapitalList:
         for DecommissionCost in [DecommissionCostBest, DecommissionCostMedian, DecommissionCostWorst ]:
           for DecommissionCostBackup in [DecommissionCostBackupBest, DecommissionCostBackupMedian, DecommissionCostBackupWorst]:
             UtilityCost = UtilityPowerGeneration*8766*UtilityRate*1000 # $
+            if Scenario == 'Scenario2':
+                UtilityCostBackup = DaysOfPowerPerYearBackup*24*UtilityRate*1000*PowerGeneration
+                UtilityCost = UtilityCost+UtilityCostBackup
+            else:
+                UtilityCost = UtilityCost
 #############################################################################################
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
@@ -8049,14 +7997,11 @@ for interest in CostOfCapitalList:
                 FuelList.append(Ft)
                 OMtList.append(OMt)
                 CapitalCosts.append(0)
-            if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
-                RefurbishmentList.append(float(IntermittentCosts))
-            else:
-                RefurbishmentList.append(0)
-            if t == NumberOfYears:
                 DecommissionList.append(AnnualDecommissionCost)
-            else:
-                DecommissionList.append(0)
+                if GenerationInput == 'Nuclear' and t % CoreLife == 0 and t!=NumberOfYears:
+                    RefurbishmentList.append(float(IntermittentCosts))
+                else:
+                    RefurbishmentList.append(0)
             dfPrimary = pd.DataFrame(list(zip(years, CapitalCosts, RefurbishmentList ,OMtList, FuelList, DecommissionList)), columns = ['Year', 'CapInv.', 'Refurbishment Cost','O&M', 'FuelCost', 'Decommission'])
             dfPrimary['Total'] =dfPrimary['O&M']+dfPrimary['CapInv.']+dfPrimary['FuelCost']+dfPrimary['Refurbishment Cost']+dfPrimary['Decommission']
             dfPrimary['O&M'] = dfPrimary.apply(lambda x: "{:,.2f}".format(x['O&M']), axis=1)
