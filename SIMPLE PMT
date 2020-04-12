@@ -25,7 +25,10 @@ Created on Thu Nov 21 13:33:50 2019
 
 @author: jjjlp
 """
-
+# =============================================================================
+from IPython import get_ipython
+get_ipython().magic('reset -sf')
+# =============================================================================
 import numpy as np
 import pandas as pd
 
@@ -203,10 +206,12 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario4']:
         else:
             AltFuelCostBackup = AltFuelCostBackup
            
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
+#         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
+#         else:
+#             AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][2]
@@ -238,7 +243,10 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario4']:
             AnnualFixedOMCost =FixedOMCost*CapacityNeeded*1000*CapacityFactor    #   $
             AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration*CapacityFactor  #  $
 
-
+        #print(AltFuelCost)
+        #print(TotalAnnualGeneration)
+        #print(CapacityFactor)
+        #print(AnnualFuelCost)
         TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
         AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
 
@@ -256,10 +264,8 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario4']:
        
         TotalCapitalCostBackup = 1000*CapacityNeededBackup*CapitalCostBackup
         TotalAnnualGenerationBackup = DaysOfPowerPerYearBackup*24*1000*CapacityNeededBackup
-        if AltFuelCostBackup == 0:
-
-           
-   
+        
+        if AltFuelCostBackup == 0:  
             AnnualFuelCostBackup=FuelCostBackup*HeatRateBackup*TotalAnnualGenerationBackup  #  $
             AnnualFixedOMCostBackup = FixedOMCostBackup*CapacityNeededBackup*1000     #  $
             AnnualVariableOMCostBackup = VariableOMCostBackup*TotalAnnualGenerationBackup# $
@@ -341,12 +347,10 @@ for Scenario in ['Scenario1','Scenario2','Scenario3','Scenario4']:
         PrimaryNPV = np.where(np.isnan(PrimaryNPV), 0, PrimaryNPV)
         val = np.float64(PrimaryNPV)
         PrimaryNPV = val.item()
-        print("NPV: "+"{:,.2f}".format(PrimaryNPV));
-        #print(CapitalCostSensitivityY)
+        print("NPV Primary: "+"{:,.2f}".format(PrimaryNPV));
         PrimaryPMT =np.pmt(interest,NumberOfYears, -PrimaryNPV)
         PrimaryPMT = np.where(np.isnan(PrimaryPMT), 0, PrimaryPMT)
-        print("Payment: "+"${:,.2f}".format(PrimaryPMT))
-        #print(Scenario,GenerationInput,GenerationInputBackup)
+        print("Payment Primary: "+"${:,.2f}".format(PrimaryPMT))
         pd.set_option('display.max_columns', None)
         pd.set_option('display.max_rows', None)
 
