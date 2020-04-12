@@ -391,10 +391,12 @@ for interest in CostOfCapitalList:
         else:
                 AltFuelCostBackup = AltFuelCostBackup
         
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
+#         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
+#         else:
+#             AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
@@ -1082,10 +1084,12 @@ for interest in CostOfCapitalList:
         else:
                 AltFuelCostBackup = AltFuelCostBackup
             
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
+#         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
+#         else:
+#             AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
@@ -1784,10 +1788,12 @@ for interest in CostOfCapitalList:
         else:
                 AltFuelCostBackup = AltFuelCostBackup
         
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
+#         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
+#         else:
+#             AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
@@ -2519,10 +2525,12 @@ for interest in CostOfCapitalList:
         else:
                 AltFuelCostBackup = AltFuelCostBackup
         
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
+#         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
+#         else:
+#             AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
 
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
@@ -3286,10 +3294,12 @@ for interest in CostOfCapitalList:
         else:
                 AltFuelCostBackup = AltFuelCostBackup
         
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
+#         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
+#         else:
+#             AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
@@ -4031,10 +4041,12 @@ for interest in CostOfCapitalList:
         else:
                 AltFuelCostBackup = AltFuelCostBackup
         
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
+#         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
+#         else:
+#             AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
@@ -4774,10 +4786,12 @@ for interest in CostOfCapitalList:
         else:
                 AltFuelCostBackup = AltFuelCostBackup
         
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
+#         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
+#         else:
+#             AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
@@ -5538,14 +5552,16 @@ for interest in CostOfCapitalList:
                 AltFuelCostBackupBest = AltFuelCostBackupBest
                 AltFuelCostBackupWorst = AltFuelCostBackupWorst
         
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackupMedian = LNGBackupMedian
-            AltFuelCostBackupBest = LNGBackupBest
-            AltFuelCostBackupWorst = LNGBackupWorst
-        else:
-            AltFuelCostBackupMedian = AltFuelCostBackupMedian
-            AltFuelCostBackupBest = AltFuelCostBackupBest
-            AltFuelCostBackupWorst = AltFuelCostBackupWorst
+# =============================================================================
+#         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#             AltFuelCostBackupMedian = LNGBackupMedian
+#             AltFuelCostBackupBest = LNGBackupBest
+#             AltFuelCostBackupWorst = LNGBackupWorst
+#         else:
+#             AltFuelCostBackupMedian = AltFuelCostBackupMedian
+#             AltFuelCostBackupBest = AltFuelCostBackupBest
+#             AltFuelCostBackupWorst = AltFuelCostBackupWorst
+# =============================================================================
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
             AltFuelCostBackupMedian = LNGBackupMedian
@@ -6294,38 +6310,7 @@ for interest in CostOfCapitalList:
             NumberOfYearsBackupWorst = dfInputs['Plant Life (Years)'][2]
         else:
             print("error")
-        
-        
-        if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-                AltFuelCostMedian = LNGMedian
-                AltFuelCostBest = LNGBest
-                AltFuelCostWorst = LNGWorst
-           
-        else:
-                AltFuelCostMedian= AltFuelCostMedian
-                AltFuelCostBest = AltFuelCostBest
-                AltFuelCostWorst = AltFuelCostWorst
                 
-        if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-                AltFuelCostBackupMedian = LNGBackupMedian
-                AltFuelCostBackupBest = LNGBackupBest
-                AltFuelCostBackupWorst = LNGBackupWorst
-        else:
-                AltFuelCostBackupMedian = AltFuelCostBackupMedian
-                AltFuelCostBackupBest = AltFuelCostBackupBest
-                AltFuelCostBackupWorst = AltFuelCostBackupWorst
-        
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
-            
-        if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
-           
-        
 ##################################################################################################
         for HeatRate in [HeatRateBest, HeatRateMedian, HeatRateWorst ]:
           for HeatRateBackup in [HeatRateBackupBest, HeatRateBackupMedian, HeatRateBackupWorst]:
@@ -6339,15 +6324,13 @@ for interest in CostOfCapitalList:
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
             TotalAnnualGeneration = DaysOfPowerPerYear*24*1000*CapacityNeeded      #kWh
-            if AltFuelCost == 0:
-                AnnualFuelCost=FuelCost*HeatRate*TotalAnnualGeneration*CapacityFactor  #  $
-                AnnualFixedOMCost = FixedOMCost*CapacityNeeded*1000*CapacityFactor     #  $
-                AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration*CapacityFactor# $
-   
+
+            if Scenario == 'Scenario4' and GenerationInput =='NaturalGas':
+                AnnualFuelCost = LNG*TotalAnnualGeneration*CapacityFactor
             else:
-                AnnualFuelCost = AltFuelCost*TotalAnnualGeneration*CapacityFactor    #   $
-                AnnualFixedOMCost =FixedOMCost*CapacityNeeded*1000*CapacityFactor    #   $
-                AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration*CapacityFactor  #  $
+                AnnualFuelCost=FuelCost*HeatRate*TotalAnnualGeneration*CapacityFactor  #  $
+            AnnualFixedOMCost = FixedOMCost*CapacityNeeded*1000*CapacityFactor     #  $
+            AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration*CapacityFactor# $
 
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
@@ -6367,25 +6350,23 @@ for interest in CostOfCapitalList:
        
             TotalCapitalCostBackup = 1000*CapacityNeededBackup*CapitalCostBackup
             TotalAnnualGenerationBackup = DaysOfPowerPerYearBackup*24*1000*CapacityNeededBackup
-            if AltFuelCostBackup == 0:
-
-           
-   
-                AnnualFuelCostBackup=FuelCostBackup*HeatRateBackup*TotalAnnualGenerationBackup  #  $
-                AnnualFixedOMCostBackup = FixedOMCostBackup*CapacityNeededBackup*1000     #  $
-                AnnualVariableOMCostBackup = VariableOMCostBackup*TotalAnnualGenerationBackup# $
+            if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
+                AnnualFuelCostBackup =LNGBackup*TotalAnnualGenerationBackup
+# =============================================================================
+#             elif Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#                 AnnualFuelCostBackup = LNGBackup*TotalAnnualGenerationBackup
+# =============================================================================
+            elif Scenario == 'Scenario3' and GenerationInputBackup == 'NaturalGas':
+                AnnualFuelCostBackup = LNGBackup*TotalAnnualGenerationBackup
             else:
-
-                AnnualFuelCostBackup = AltFuelCostBackup*TotalAnnualGenerationBackup    #   $
-                AnnualFixedOMCostBackup =FixedOMCostBackup*CapacityNeededBackup*1000    #   $
-                AnnualVariableOMCostBackup = VariableOMCostBackup*TotalAnnualGenerationBackup  #  $
+                AnnualFuelCostBackup = FuelCostBackup*HeatRateBackup*TotalAnnualGeneration  #  $
+          
+            AnnualFixedOMCostBackup = FixedOMCostBackup*CapacityNeededBackup*1000     #  $
+            AnnualVariableOMCostBackup = VariableOMCostBackup*TotalAnnualGenerationBackup# $
 
             TotalOMCostBackup = AnnualFixedOMCostBackup+AnnualVariableOMCostBackup
        
-            if AltFuelCostBackup != 0 :
-                ReserveFuel = PowerGenerationBackup*1000*8766/365*DaysOfResilience*AltFuelCostBackup
-            else:
-                ReserveFuel=PowerGenerationBackup*1000*8766/365*DaysOfResilience*FuelCostBackup*HeatRateBackup
+            ReserveFuel=PowerGenerationBackup*1000*8766/365*DaysOfResilience*FuelCostBackup*HeatRateBackup
    
    
 #################################################################################################3
@@ -7088,33 +7069,44 @@ for interest in CostOfCapitalList:
         
         
         if Scenario == 'Scenario4' and GenerationInput== 'NaturalGas':
-                AltFuelCostMedian = LNGMedian
-                AltFuelCostBest = LNGBest
-                AltFuelCostWorst = LNGWorst
+                FuelCostMedian = LNGMedian/HeatRate
+                FuelCostBest = LNGMedian/HeatRate
+                FuelCostWorst = LNGMedian/HeatRate
            
         else:
-                AltFuelCostMedian= AltFuelCostMedian
-                AltFuelCostBest = AltFuelCostBest
-                AltFuelCostWorst = AltFuelCostWorst
+                FuelCostMedian= FuelCostMedian
+                FuelCostBest = FuelCostBest
+                FuelCostWorst = FuelCostWorst
+                
                 
         if Scenario == 'Scenario4' and GenerationInputBackup == 'NaturalGas':
-                AltFuelCostBackupMedian = LNGBackupMedian
-                AltFuelCostBackupBest = LNGBackupBest
-                AltFuelCostBackupWorst = LNGBackupWorst
+                FuelCostBackupMedian = LNGBackupMedian/HeatRateBackup
+                FuelCostBackupBest = LNGBackupMedian/HeatRateBackup
+                FuelCostBackupWorst = LNGBackupMedian/HeatRateBackup
         else:
-                AltFuelCostBackupMedian = AltFuelCostBackupMedian
-                AltFuelCostBackupBest = AltFuelCostBackupBest
-                AltFuelCostBackupWorst = AltFuelCostBackupWorst
+                FuelCostBackupBest = FuelCostBackupBest
+                FuelCostBackupWorst = FuelCostBackupWorst
+                FuelCostBackupMedian = FuelCostBackupMedian
         
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
+#         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#             FuelCostBackupBest = LNGBackupMedian/HeatRateBackup
+#             FuelCostBackupMedian = LNGBackupMedian/HeatRateBackup
+#             FuelCostBackupWorst = LNGBackupMedian/HeatRateBackup
+#         else:
+#             FuelCostBackupBest = FuelCostBackupBest
+#             FuelCostBackupMedian = FuelCostBackupMedian
+#             FuelCostBackupWorst = FuelCostBackupWorst
+# =============================================================================
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
+            FuelCostBackupMedian = LNGBackupMedian/HeatRateBackup
+            FuelCostBackupBest = LNGBackupMedian/HeatRateBackup
+            FuelCostBackupWorst = LNGBackupMedian/HeatRateBackup
         else:
-            AltFuelCostBackup = AltFuelCostBackup
+            FuelCostBackupMedian = FuelCostBackupMedian
+            FuelCostBackupBest = FuelCostBackupBest
+            FuelCostBackupWorst = FuelCostBackupWorst
            
         
 ##################################################################################################
@@ -7130,16 +7122,11 @@ for interest in CostOfCapitalList:
             CapacityNeeded = PowerGeneration / CapacityFactor     #  MW
             TotalCapitalCost = 1000*CapacityNeeded*CapitalCost    #  $
             TotalAnnualGeneration = DaysOfPowerPerYear*24*1000*CapacityNeeded      #kWh
-            if AltFuelCost == 0:
-                AnnualFuelCost=FuelCost*HeatRate*TotalAnnualGeneration*CapacityFactor  #  $
-                AnnualFixedOMCost = FixedOMCost*CapacityNeeded*1000*CapacityFactor    #  $
-                AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration*CapacityFactor# $
+           
+            AnnualFuelCost=FuelCost*HeatRate*TotalAnnualGeneration*CapacityFactor  #  $
+            AnnualFixedOMCost = FixedOMCost*CapacityNeeded*1000*CapacityFactor    #  $
+            AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration*CapacityFactor# $
    
-            else:
-                AnnualFuelCost = AltFuelCost*TotalAnnualGeneration*CapacityFactor    #   $
-                AnnualFixedOMCost =FixedOMCost*CapacityNeeded*1000*CapacityFactor   #   $
-                AnnualVariableOMCost = VariableOMCost*TotalAnnualGeneration*CapacityFactor  #  $
-
 
             TotalOMCost = AnnualFixedOMCost+AnnualVariableOMCost   #    $
             AnnualDecommissionCost = DecommissionCost*CapacityNeeded*1000*8766
@@ -7158,25 +7145,14 @@ for interest in CostOfCapitalList:
        
             TotalCapitalCostBackup = 1000*CapacityNeededBackup*CapitalCostBackup
             TotalAnnualGenerationBackup = DaysOfPowerPerYearBackup*24*1000*CapacityNeededBackup
-            if AltFuelCostBackup == 0:
-
-           
    
-                AnnualFuelCostBackup=FuelCostBackup*HeatRateBackup*TotalAnnualGenerationBackup  #  $
-                AnnualFixedOMCostBackup = FixedOMCostBackup*CapacityNeededBackup*1000     #  $
-                AnnualVariableOMCostBackup = VariableOMCostBackup*TotalAnnualGenerationBackup# $
-            else:
-
-                AnnualFuelCostBackup = AltFuelCostBackup*TotalAnnualGenerationBackup    #   $
-                AnnualFixedOMCostBackup =FixedOMCostBackup*CapacityNeededBackup*1000    #   $
-                AnnualVariableOMCostBackup = VariableOMCostBackup*TotalAnnualGenerationBackup  #  $
+            AnnualFuelCostBackup=FuelCostBackup*HeatRateBackup*TotalAnnualGenerationBackup  #  $
+            AnnualFixedOMCostBackup = FixedOMCostBackup*CapacityNeededBackup*1000     #  $
+            AnnualVariableOMCostBackup = VariableOMCostBackup*TotalAnnualGenerationBackup# $
 
             TotalOMCostBackup = AnnualFixedOMCostBackup+AnnualVariableOMCostBackup
        
-            if AltFuelCostBackup != 0 :
-                ReserveFuel = PowerGenerationBackup*1000*8766/365*DaysOfResilience*AltFuelCostBackup
-            else:
-                ReserveFuel=PowerGenerationBackup*1000*8766/365*DaysOfResilience*FuelCostBackup*HeatRateBackup
+            ReserveFuel=PowerGenerationBackup*1000*8766/365*DaysOfResilience*FuelCostBackup*HeatRateBackup
    
    
 #################################################################################################3
@@ -7879,10 +7855,12 @@ for interest in CostOfCapitalList:
                 AltFuelCostBackupBest = AltFuelCostBackupBest
                 AltFuelCostBackupWorst = AltFuelCostBackupWorst
         
-        if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
-            AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
-        else:
-            AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
+#         if Scenario == 'Scenario1' and GenerationInputBackup == 'NaturalGas':
+#             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
+#         else:
+#             AltFuelCostBackup = AltFuelCostBackup
+# =============================================================================
             
         if Scenario == 'Scenario3' and GenerationInputBackup =='NaturalGas':
             AltFuelCostBackup = dfInputs['LNG cost ($/KWh)'][7]
