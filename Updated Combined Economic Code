@@ -1,4 +1,3 @@
-
 import numpy as np
 import yaml
 import pandas as pd
@@ -93,16 +92,24 @@ def monte_carlo_analysis(my_data):
     Monte_Carlo_List = []
     iterations = int(input("Enter Number of Iterations for Monte Carlo Analysis:", ))
     for j in range (1, iterations+1):
-        a = monte_carlo_distribution(my_data)
-        Monte_Carlo_List.append(Results)
+        print("BEGINNING")
+        #monte_carlo_distribution(my_data)
+        print("MIDDLE")
+        Monte_Carlo_List.append(monte_carlo_distribution(my_data))
+        print("END")
         print(Monte_Carlo_List)
         print(j)
         
         
 def monte_carlo_distribution(my_data):
+    print("WTF")
     for Scenario, cases in case_list.items():
+        print("Woah")
+        print(Scenario, cases)
         for generation_type_one, generation_type_two in cases:
+            print("skjkj")
             my_data = select_lng(Scenario,generation_type_one, generation_type_two, my_data)
+            print("ACTION")
             Sensitive_list = list(my_data['generation_data']['Nuclear']['Median'].keys())
             Sensitive_list.remove('FuelCost')
             Sensitive_list.remove('AltFuelCost')
@@ -113,20 +120,26 @@ def monte_carlo_distribution(my_data):
                     generation_type_two_data = dict(my_data['generation_data'][generation_type_two]['Median'])
                     if z == generation_type_one and my_data['generation_data'][z]['Worst'][x] < my_data['generation_data'][z]['Best'][x]:
                         generation_type_one_data[x] = np.random.triangular(my_data['generation_data'][z]['Worst'][x],my_data['generation_data'][z]['Median'][x],my_data['generation_data'][z]['Best'][x])
+                        print(x, z)
                     elif z == generation_type_one and my_data['generation_data'][z]['Worst'][x] > my_data['generation_data'][z]['Best'][x]:
                         generation_type_one_data[x] = np.random.triangular(my_data['generation_data'][z]['Best'][x],my_data['generation_data'][z]['Median'][x],my_data['generation_data'][z]['Worst'][x])
+                        print(x, z)
                     elif z == generation_type_one and my_data['generation_data'][z]['Worst'][x] == my_data['generation_data'][z]['Best'][x]:
                         generation_type_one_data[x] = np.random.uniform(my_data['generation_data'][z]['Best'][x],my_data['generation_data'][z]['Worst'][x])
+                        print(x, z)
                     elif z == generation_type_two and my_data['generation_data'][z]['Worst'][x] < my_data['generation_data'][z]['Best'][x]:
                         generation_type_two_data[x] = np.random.triangular(my_data['generation_data'][z]['Worst'][x],my_data['generation_data'][z]['Median'][x],my_data['generation_data'][z]['Best'][x])
+                        print(x, z)
                     elif z == generation_type_two and my_data['generation_data'][z]['Worst'][x] > my_data['generation_data'][z]['Best'][x]:
                         generation_type_two_data[x] = np.random.triangular(my_data['generation_data'][z]['Best'][x],my_data['generation_data'][z]['Median'][x],my_data['generation_data'][z]['Worst'][x])
+                        print(x, z)
                     else:
                         generation_type_one_data[x] = np.random.uniform(my_data['generation_data'][z]['Best'][x],my_data['generation_data'][z]['Worst'][x])
+                        print(x, z)
             Results.append([Scenario, generation_type_one, generation_type_two, interest, 
                             pmt_total(Scenario, generation_type_one_data,
                                       generation_type_two_data, interest)])
-    print(Results[0][4])
+            print(Results[0][4])
     return Results
             
             
